@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#173b69" />
   <meta name="description" content="適合國小與國中課程的槓桿、定滑輪、動滑輪互動教學模擬器，加入受力量表與可變大小砝碼。" />
-  <title>力學探險室 v1.4｜雙砝碼 × 量表施力切換</title>
+  <title>力學探險室 v1.6.1｜動態物理檢查修正版</title>
   <style>
     :root{--ink:#193453;--ink-2:#47627e;--muted:#72869e;--navy:#173b69;--navy2:#214f87;--sky:#eaf5ff;--canvas:#f6faff;--outline:#d8e5f2;--a:#ef845c;--b:#3e90e5;--violet:#8d75dd;--green:#229d8a;--shadow:0 12px 34px rgba(29,70,119,.075)}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);background:radial-gradient(circle at 94% 5%,#dff1ff 0,transparent 35%),radial-gradient(circle at 4% 100%,#e9ecff 0,transparent 30%),#f2f7fd;min-height:100vh;line-height:1.55}
@@ -53,6 +53,55 @@
     @media(max-width:810px){.shell{padding:13px 12px 26px}.mast{padding:18px}.mast-row{align-items:flex-start;gap:13px}.title-box{gap:10px}.logo{width:45px;height:45px;border-radius:13px}.mast h1{font-size:22px}.mast p{font-size:11px}.head-btn{padding:9px 12px}.head-btn span{display:none}.modes{gap:9px;margin:13px 0}.mode{padding:12px 10px;min-height:70px;gap:9px}.mode.active{padding:11.5px 9.5px}.mode-ico{font-size:23px;width:37px;height:40px}.mode-txt strong{font-size:14px}.mode-txt span{font-size:10px}.workbench{grid-template-columns:minmax(0,1fr)}.side-pane{padding:20px}.controls-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}.side-actions{max-width:440px}.diagram{max-height:490px}.lesson{grid-template-columns:1fr 1fr}.lever-view-switch{margin-bottom:12px}}
     @media(max-width:540px){.mast{border-radius:18px;padding:16px 14px}.eyebrow{font-size:10px;letter-spacing:1px}.mast h1{font-size:19px}.logo{width:37px;height:37px}.logo svg{width:24px}.mast p{font-size:10px;line-height:1.45}.mast-actions{gap:5px}.head-btn{padding:8px 9px;border-radius:10px}.head-btn svg{width:16px}.head-btn .visually-inline{display:inline;font-size:11px}.section-kicker{font-size:10px;letter-spacing:1.1px}.modes{gap:7px}.mode{display:flex;flex-direction:column;justify-content:center;gap:1px;min-height:77px;text-align:center;padding:9px 4px}.mode.active{padding:8.5px 3.5px}.mode-ico{font-size:23px;width:auto;height:29px;background:none!important}.mode-txt strong{font-size:13px}.mode-txt span{font-size:10px;line-height:1.3;margin-top:0}.mode-check{display:none!important}.main-pane{padding:16px 12px}.side-pane{padding:18px 16px}.pane{border-radius:17px}.pane h2{font-size:20px}.mini-tag{font-size:10px;padding:5px 7px}.intro{font-size:12px}.viz{margin-top:14px;border-radius:12px}.diagram{min-height:220px}.viz-legend{top:6px;left:6px;gap:3px}.legend-pill{padding:3px 5px;font-size:9px}.drag-hint{font-size:9px;bottom:4px;right:5px;padding:3px 5px}.readout{gap:6px;margin:9px 0}.read-card{padding:9px 7px;border-radius:10px}.read-card .read-label{font-size:10px}.read-card .read-value{font-size:15px}.read-card .read-value small{font-size:10px}.status{margin-top:10px;padding:11px}.status-title{font-size:13px}.status-desc{font-size:11px}.torque-details{padding:12px}.formula{font-size:11px}.formula strong{font-size:11px}.controls-grid{grid-template-columns:1fr;gap:0}.lesson{grid-template-columns:1fr;gap:9px}.lesson-card{padding:13px 15px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+  
+    .meter-range-panel{grid-column:1/-1;margin:12px 0 0;padding:12px 13px;border-radius:12px;background:#f3f9ff;border:1px solid #d5e9fa;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+    .meter-range-label{font-size:12px;font-weight:900;color:#386d9a;min-width:100%;line-height:1.4}
+    .meter-range-options{display:flex;gap:6px;flex-wrap:wrap}
+    .meter-range-button{padding:7px 11px;border-radius:9px;background:#fff;border:1px solid #bbd4e8;color:#527898;font-size:12px;font-weight:850;min-height:36px}
+    .meter-range-button.active{background:#2f83d0;border-color:#2f83d0;color:#fff}
+    .meter-bump{display:flex;gap:8px;align-items:center;margin-left:auto}
+    .meter-bump button{background:#e2f0ff;border:1px solid #b1d3f2;color:#216fae;border-radius:9px;font-weight:900;font-size:13px;min-width:64px;min-height:38px}
+    .meter-range-hint{font-size:11px;color:#66859f;width:100%;line-height:1.5;margin:0}
+    .diagram [data-drag="forceGauge"]{cursor:ns-resize;touch-action:none}
+    .diagram .force-arrow{pointer-events:none}
+    @media(max-width:540px){.meter-range-panel{padding:10px;gap:8px}.meter-bump{margin-left:0}.meter-bump button{min-width:57px}}
+
+    .force-feedback{display:none}
+    @media(max-width:540px){
+      .force-feedback:not(.hide){display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:5px 10px;padding:11px 12px;background:linear-gradient(110deg,#f1f8ff,#e4f2ff);border:1px solid #c7e1fa;border-radius:12px;margin:8px 0 11px}
+      .force-feedback-label{color:#47789d;font-size:11px;font-weight:850;grid-column:1/2}
+      .force-feedback strong{color:#1c75bc;font-size:21px;letter-spacing:.2px;line-height:1;grid-column:2/3}
+      .force-feedback-range{font-size:11px;color:#577f9f;text-align:right;grid-column:3/4}
+      .force-feedback-track{height:7px;background:#c8dff2;border-radius:10px;grid-column:1/-1;overflow:hidden}
+      .force-feedback-fill{display:block;width:0;height:100%;background:linear-gradient(90deg,#68b3ef,#2c7ecd);border-radius:10px}
+    }
+
+    .physics-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #d4e5f3;background:linear-gradient(130deg,#f7fbff,#eaf4ff);padding:11px 13px;margin:13px 0 12px;border-radius:14px;flex-wrap:wrap}
+    .physics-toolbar-title{display:flex;flex-direction:column;gap:2px}.physics-toolbar-title strong{font-size:13px;color:#23527b}.physics-toolbar-title span{font-size:11px;color:#657f99}
+    .physics-toolbar-actions{display:flex;gap:6px;border:1px solid #d9e6f3;border-radius:12px;padding:3px;background:#fff}
+    .physics-mode-btn{font-size:12px;font-weight:850;padding:8px 11px;border:0;border-radius:9px;background:transparent;color:#617d98;white-space:nowrap}
+    .physics-mode-btn.active{background:#317ec2;color:#fff;box-shadow:0 3px 7px #367fba26}
+    .physics-telemetry{margin:12px 0;padding:13px 14px;border-radius:14px;background:#f8fbff;border:1px solid #d7e7f6}
+    .physics-tel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:#255780}
+    .physics-tel-switch{font-size:11px;color:#56728e;display:flex;gap:6px;align-items:center;font-weight:750;cursor:pointer}
+    .physics-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}@media(max-width:1180px){.physics-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}.physics-metric{padding:9px;background:white;border:1px solid #e0edf9;border-radius:9px;min-width:0}
+    .physics-metric b{font-size:16px;color:#235c91;display:block;overflow-wrap:anywhere}.physics-metric span{font-size:10px;color:#6b829a;font-weight:750}
+    .physics-tel-help{margin:9px 0 0;color:#758ba0;font-size:11px;line-height:1.7}
+    .physics-settings{margin:14px 0 2px;border:1px solid #d7e6f5;border-radius:13px;padding:12px;background:linear-gradient(145deg,#f9fcff,#f2f8ff)}
+    .physics-settings>strong{font-size:13px;color:#275b86}.physics-settings>p{font-size:11px;color:#657f99;margin:3px 0 10px;line-height:1.6}
+    .physics-option{margin:9px 0}.physics-option-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:800;color:#426d90}
+    .physics-option output{font-size:12px;font-variant-numeric:tabular-nums;color:#2b73b3;font-weight:900;white-space:nowrap}
+    .physics-option input[type=range]{width:100%;min-height:25px;accent-color:#317ec2;cursor:pointer}
+    @media(max-width:680px){.physics-toolbar{align-items:stretch}.physics-toolbar-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.physics-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:350px){.physics-mode-btn{padding:8px 5px;font-size:11px}.physics-metric b{font-size:14px}}
+
+    .physics-choice-group{display:grid;gap:10px;background:#fff;border:1px solid #e0ebf6;border-radius:10px;padding:10px;margin-bottom:10px}
+    .physics-check{display:flex;align-items:center;gap:8px;color:#315e87;font-size:12px;font-weight:850;cursor:pointer}
+    .physics-check input{width:17px;height:17px;accent-color:#347ec4}
+    .physics-shape{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:#315e87;font-weight:800}
+    .physics-shape select{max-width:100%;min-width:0;border:1px solid #cee0f0;border-radius:8px;padding:7px 10px;background:white;color:#234d70;font-size:12px}
+    .physics-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media(max-width:1180px){.physics-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
   </style>
 </head>
 <body>
@@ -75,8 +124,9 @@
     <div class="workbench">
       <main class="pane main-pane" id="panel-stage" role="tabpanel" aria-labelledby="tab-lever">
         <div class="pane-head"><div><div class="section-kicker">INTERACTIVE EXPERIMENT · 互動實驗</div><h2 id="experimentTitle">槓桿平衡實驗</h2><p class="intro" id="experimentIntro">拖曳負載砝碼與支點，並調整另一端的施力大小與位置，觀察槓桿如何轉動。</p></div><span class="mini-tag" id="experimentTag">實驗 01 / 03</span></div>
-        <div class="viz" id="viz"><div class="viz-legend" id="vizLegend"><span class="legend-pill orange">負載</span><span class="legend-pill blue">施力</span></div><svg class="diagram" id="diagram" viewBox="0 0 1000 500" role="img" aria-label="互動力學示意圖"></svg><span class="drag-hint" id="dragHint">↔ 可拖曳支點與砝碼</span></div>
-        <section class="experiment-flow" id="flowPanel" aria-labelledby="flowTitle">
+        <div class="physics-toolbar" id="physicsToolbar" role="group" aria-label="動畫運作模式"><div class="physics-toolbar-title"><strong>運動模擬</strong><span id="physicsModeHint">國小直觀示意：動畫演示平衡結果</span></div><div class="physics-toolbar-actions"><button type="button" id="modeIllustration" class="physics-mode-btn active" aria-pressed="true">示意動畫</button><button type="button" id="modePhysics" class="physics-mode-btn" aria-pressed="false">動態物理</button></div></div><div class="viz" id="viz"><div class="viz-legend" id="vizLegend"><span class="legend-pill orange">負載</span><span class="legend-pill blue">施力</span></div><svg class="diagram" id="diagram" viewBox="0 0 1000 500" role="img" aria-label="互動力學示意圖"></svg><span class="drag-hint" id="dragHint">↔ 可拖曳支點與砝碼</span></div>
+        <div class="force-feedback hide" id="forceFeedback" aria-label="手機版施力放大讀值"><span class="force-feedback-label">力計讀數</span><strong id="forceFeedbackValue">10 N</strong><span class="force-feedback-range" id="forceFeedbackRange">量程 50 N</span><div class="force-feedback-track"><span class="force-feedback-fill" id="forceFeedbackFill"></span></div></div>
+        <section id="physicsTelemetry" class="physics-telemetry hide" aria-label="物理狀態"><div class="physics-tel-head"><strong>即時物理狀態</strong><label class="physics-tel-switch"><input id="showLivePhysics" type="checkbox"> 展示即時數據（預測期間也顯示）</label></div><div id="physicsMetrics" class="physics-metrics"></div><p class="physics-tel-help" id="physicsTelHelp">從靜止開始，套用牛頓第二定律，根據時間積分計算位置。</p></section><section class="experiment-flow" id="flowPanel" aria-labelledby="flowTitle">
           <div class="flow-header"><div><div class="section-kicker">EXPLORE · PREDICT · VERIFY</div><h3 id="flowTitle">先猜想，再動手實驗</h3></div><span class="flow-badge" id="flowBadge">準備預測</span></div>
           <div class="steps" id="flowSteps" aria-label="實驗流程"><span class="step active">① 設定條件</span><span class="step active">② 預測結果</span><span class="step">③ 動畫觀察</span><span class="step">④ 核對結果</span></div>
           <div id="predictionPanel"></div>
@@ -89,32 +139,200 @@
         <div class="torque-details hide" id="details"></div>
         <p class="footnote" id="modelNote">教學模型以 g = 10 N/kg 估算，忽略槓桿本身的重量與摩擦；傾斜角度為定性示意，不代表實際運動速度。</p>
       </main>
-      <aside class="pane side-pane" id="sidePane"><div class="side-title"><span class="gear" aria-hidden="true">⚙</span>實驗設定 <span class="pill-live" id="simBadge">● 準備實驗</span></div><p class="side-help" id="sideHelp">調整數值，也可以直接拖動畫面中的物件。</p><div class="lever-view-switch hide" id="leverViewSwitch" role="group" aria-label="槓桿施力顯示模式"><button class="view-chip active" type="button" id="viewWeightMode" aria-pressed="true">雙砝碼模式</button><button class="view-chip" type="button" id="viewGaugeMode" aria-pressed="false">量表施力模式</button></div><div id="controls" class="controls-grid"></div><div class="side-actions"><button class="action primary" type="button" id="mainAction">⚖ 一鍵平衡</button><button class="action secondary" type="button" id="resetAction">↺ 重設數值</button></div><div class="tip"><strong>💡 教師小提示</strong><p id="teacherTip">先不要顯示力矩，請學生預測哪一端會下降，再開啟數字驗證猜想。</p></div></aside>
+      <aside class="pane side-pane" id="sidePane"><div class="side-title"><span class="gear" aria-hidden="true">⚙</span>實驗設定 <span class="pill-live" id="simBadge">● 準備實驗</span></div><p class="side-help" id="sideHelp">調整數值，也可以直接拖動畫面中的物件。</p><div class="lever-view-switch hide" id="leverViewSwitch" role="group" aria-label="槓桿施力顯示模式"><button class="view-chip active" type="button" id="viewWeightMode" aria-pressed="true">雙砝碼模式</button><button class="view-chip" type="button" id="viewGaugeMode" aria-pressed="false">量表施力模式</button></div><div id="controls" class="controls-grid"></div><div id="physicsSettings" class="physics-settings hide"></div><div class="side-actions"><button class="action primary" type="button" id="mainAction">⚖ 一鍵平衡</button><button class="action secondary" type="button" id="resetAction">↺ 重設數值</button></div><div class="tip"><strong>💡 教師小提示</strong><p id="teacherTip">先不要顯示力矩，請學生預測哪一端會下降，再開啟數字驗證猜想。</p></div></aside>
     </div>
     <section class="lesson" aria-label="教學延伸">
       <div class="lesson-card"><h3><span aria-hidden="true">🔎</span>觀察重點</h3><p id="observeText">把較重的砝碼放得靠近支點，再改變另一側的施力大小與施力位置，還能達到平衡嗎？</p></div>
       <div class="lesson-card"><h3><span aria-hidden="true">💬</span>想一想</h3><p id="questionText">只改變施力大小、不改變施力位置，與只改變施力位置、不改變施力大小，結果有何不同？</p></div>
     </section>
-    <footer class="footer"><span>力學探險室 · 槓桿 × 定滑輪 × 動滑輪</span><span>v1.2｜理想化教學示意 · 滑輪旋轉及位移同步 · 可暫停觀察</span></footer>
+    <footer class="footer"><span>力學探險室 · 槓桿 × 定滑輪 × 動滑輪</span><span>v1.6.1｜示意動畫 × 動態物理 · 可選力矩資訊 · 可暫停觀察</span></footer>
   </div>
   <script>
   'use strict';
   (() => {
     const defaults={lever:{loadMass:3,effortMass:1,effortForce:10,pivot:100,loadPos:40,effortPos:190},fixed:{mass:6,force:60,pull:80},moving:{mass:6,force:30,pull:100}};
-    let state=JSON.parse(JSON.stringify(defaults));let mode='lever',showTorque=false,presentation=false,drag=null;
+    let state=JSON.parse(JSON.stringify(defaults));let mode='lever',leverDisplayMode='weights',showTorque=false,presentation=false,drag=null;
+    let meterDisplayedForce=10,meterRaf=0,meterRange=50;
     let inquiry=true,phase='ready',progress=0,rafId=0,prediction='',distanceGuess='',animationSpeed='normal',elapsedMs=0,lastFrameTime=null;
+    let dynamicMode=false,showLivePhysics=false;
+    const physicsOptions={beamMass:0,pulleyMass:0,fixedPulleyMass:0,damping:.25,duration:5,pulleyInertia:true,pulleyShape:'disk',pulleyRadius:.10,axleFriction:0,pivotFriction:0,stopBounce:.08};
+    const freshPhysics=()=>({angle:0,angularVelocity:0,angularAcceleration:0,torque:0,inertia:0,y:0,velocity:0,acceleration:0,clock:0,collision:false,sticking:false});
+    let physical=freshPhysics();
     const g=10;
     const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
     const resultsVisible=()=>!inquiry||phase==='finished';
-    const effectiveProgress=()=>!inquiry?1:phase==='ready'?0:progress;
+    const effectiveProgress=()=>dynamicMode?0:!inquiry?1:phase==='ready'?0:progress;
     const smoothstep=t=>t*t*(3-2*t); // Smooth start and stop, not a dynamic force simulation.
     const durations={slow:3800,normal:2200,fast:1100};
     const $=id=>document.getElementById(id);
     const fmt=(n,d=1)=>Number(n).toLocaleString('zh-TW',{maximumFractionDigits:d,minimumFractionDigits:0});
     const clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
     const pretty=(v)=>Number.isInteger(v)?String(v):String(Number(v.toFixed(2)));
+    const physicsSpeed=()=>animationSpeed==='slow'?.6:animationSpeed==='fast'?2:1;
+    function physicsLeverProps(){
+      const s=state.lever,L=2,offset=(100-s.pivot)/100,left=(s.loadPos-s.pivot)/100,right=(s.effortPos-s.pivot)/100;
+      const massR=leverDisplayMode==='weights'?s.effortMass:0;
+      const torque0=g*(s.loadMass*left+massR*right+physicsOptions.beamMass*offset)+(leverDisplayMode==='gauge'?s.effortForce*right:0);
+      const I=Math.max(.06,s.loadMass*left*left+massR*right*right+physicsOptions.beamMass*(L*L/12+offset*offset)+.06);
+      return {torque0,I};
+    }
+    function physicalPulleyProperties(){
+      const s=state[mode],n=mode==='fixed'?1:2,rotorMass=mode==='fixed'?physicsOptions.fixedPulleyMass:physicsOptions.pulleyMass;
+      const m=s.mass+(mode==='moving'?rotorMass:0);
+      const radius=physicsOptions.pulleyRadius,shapeFactor=physicsOptions.pulleyShape==='ring'?1:.5;
+      const inertia=physicsOptions.pulleyInertia?shapeFactor*rotorMass*radius*radius:0;
+      const equivalentMass=inertia/(radius*radius);
+      const resistance=physicsOptions.axleFriction/radius;
+      const W=m*g,drive=n*s.force-W;
+      return {n,m,F:s.force,W,net:drive,drive,inertia,equivalentMass,effectiveMass:m+equivalentMass,resistance,radius};
+    }
+    function pulleyDynamics(p,v){
+      const c=physicsOptions.damping;
+      if(Math.abs(v)<1e-5&&Math.abs(p.drive)<=p.resistance+1e-8)return {a:0,friction: -p.drive,sticking:true};
+      const sign=Math.abs(v)>1e-5?Math.sign(v):Math.sign(p.drive);
+      const friction=p.resistance*sign;
+      return {a:(p.drive-friction-c*v)/p.effectiveMass,friction,sticking:false};
+    }
+    function pulleyTensions(p){
+      const initial=physical.clock<1e-8?pulleyDynamics(p,0):null;
+      const stuck=initial?initial.sticking:physical.sticking;
+      // 無外加拘束且處於靜態平衡時，繩張力仍然可以由力平衡計算。
+      // 遇到位移止擋則有未知支撐反力，不宣稱可直接求出各段張力。
+      if(physical.collision)return null;
+      const a=stuck?0:initial?initial.a:physical.acceleration,v=stuck?0:physical.velocity;
+      const loadSide=p.m*(g+a)+physicsOptions.damping*v;
+      if(mode==='fixed')return {one:loadSide,two:p.F,kind:'固定滑輪'};
+      return {one:loadSide-p.F,two:p.F,kind:'動滑輪'};
+    }
+    function dynamicPulleyOrigin(){if(mode==='fixed')return {start:320,k:42};const {h}=massVisual(state.moving.mass);return {start:Math.max(213,243-Math.max(0,h-68)*.72),k:64};}
+    function dynamicPulleyBounds(){
+      const {h}=massVisual(state[mode].mass);
+      if(mode==='fixed'){const rope=state.fixed.pull/100;return {min:Math.max((320+h-428)/42,-rope),max:Math.min((320-265)/42,rope)};}
+      const {start,k}=dynamicPulleyOrigin(),rope=state.moving.pull/200;
+      return {min:Math.max((start+86+h-428)/k,-rope),max:Math.min((start-192)/k,(243-105)/(2*k),rope)};
+    }
+    function physicsStep(dt){
+      // 碰撞為當前時間步的接觸狀態，不能沿用前一幀的碰撞旗標。
+      physical.collision=false;
+      if(mode==='lever'){
+        const {torque0,I}=physicsLeverProps();physical.inertia=I;
+        const drive=torque0*Math.cos(physical.angle);
+        const threshold=physicsOptions.pivotFriction;
+        const v=physical.angularVelocity;
+        if(Math.abs(v)<1e-5&&Math.abs(drive)<=threshold+1e-8){
+          physical.angularVelocity=0;physical.angularAcceleration=0;physical.torque=0;physical.sticking=true;
+        }else{
+          const sign=Math.abs(v)>1e-5?Math.sign(v):Math.sign(drive);
+          const tau=drive-threshold*sign-physicsOptions.damping*v;
+          const alpha=tau/I;
+          const next=v+alpha*dt;
+          if(v*next<0&&Math.abs(drive)<=threshold+1e-8){physical.angularVelocity=0;physical.angularAcceleration=0;physical.torque=0;physical.sticking=true;}
+          else {physical.angularVelocity=next;physical.angularAcceleration=alpha;physical.torque=tau;physical.sticking=false;}
+          physical.angle+=physical.angularVelocity*dt;
+        }
+        const limit=18*Math.PI/180;
+        if(Math.abs(physical.angle)>=limit){
+          const side=Math.sign(physical.angle);physical.angle=side*limit;
+          if(physical.angularVelocity*side>0){physical.angularVelocity=-physical.angularVelocity*physicsOptions.stopBounce;physical.collision=true;}
+          // At a rigid stop the contact reaction cancels outward acceleration.
+          if(drive*side>threshold&&Math.abs(physical.angularVelocity)<.01){physical.angularVelocity=0;physical.angularAcceleration=0;}
+        }
+      }else{
+        const p=physicalPulleyProperties();const result=pulleyDynamics(p,physical.velocity);
+        physical.sticking=result.sticking;
+        physical.acceleration=result.a;
+        if(result.sticking){physical.velocity=0;}
+        else {
+          const v0=physical.velocity;
+          physical.velocity+=physical.acceleration*dt;
+          if(v0*physical.velocity<0&&Math.abs(p.drive)<=p.resistance+1e-8){
+            physical.velocity=0;physical.acceleration=0;physical.sticking=true;
+          }
+        }
+        physical.y+=physical.velocity*dt;
+        const b=dynamicPulleyBounds();
+        if(physical.y<=b.min){physical.y=b.min;if(physical.velocity<0)physical.velocity=0;physical.collision=true;}
+        if(physical.y>=b.max){physical.y=b.max;if(physical.velocity>0)physical.velocity=0;physical.collision=true;}
+        if((physical.y<=b.min+1e-8&&physical.acceleration<0)||(physical.y>=b.max-1e-8&&physical.acceleration>0))physical.acceleration=0;
+      }
+      physical.clock+=dt;
+    }
+    function renderPhysicsSettings(){
+      $('physicsSettings').classList.toggle('hide',!dynamicMode);
+      $('physicsTelemetry').classList.toggle('hide',!dynamicMode);
+      $('modeIllustration').classList.toggle('active',!dynamicMode);$('modePhysics').classList.toggle('active',dynamicMode);
+      $('modeIllustration').setAttribute('aria-pressed',String(!dynamicMode));$('modePhysics').setAttribute('aria-pressed',String(dynamicMode));
+      $('physicsModeHint').textContent=dynamicMode?'連同轉動慣量、軸摩擦一起計算':'國小直觀示意：動畫演示平衡結果';
+      $('toggleInquiry').disabled=dynamicMode;
+      if(!dynamicMode){$('modelNote').textContent=group[mode].note;return;}
+      const pulley=mode!=='lever';
+      const options=[
+        ...(mode==='lever'?[['beamMass','槓桿本體質量','kg',0,3,.1],['pivotFriction','支點靜／動摩擦力矩','N·m',0,3,.05],['stopBounce','止擋回彈係數','',0,.5,.05]]:
+          [[mode==='fixed'?'fixedPulleyMass':'pulleyMass',mode==='fixed'?'固定滑輪輪體質量':'動滑輪輪體質量','kg',0,3,.1],['pulleyRadius','輪半徑（物理）','m',.05,.25,.01],['axleFriction','軸承摩擦力矩','N·m',0,1,.01]]),
+        ['damping','速度阻尼係數',mode==='lever'?'N·m·s':'N·s/m',0,2,.05],
+        ['duration','觀察時間','秒',2,12,1]
+      ];
+      const pulleyExtra=pulley?`<div class="physics-choice-group"><label class="physics-check"><input type="checkbox" id="phys-pulleyInertia" data-phys-toggle="pulleyInertia" ${physicsOptions.pulleyInertia?'checked':''}>計入滑輪轉動慣量</label><label class="physics-shape">輪體形狀 <select data-phys-select="pulleyShape" aria-label="輪體形狀"><option value="disk" ${physicsOptions.pulleyShape==='disk'?'selected':''}>實心圓盤（I=½MR²）</option><option value="ring" ${physicsOptions.pulleyShape==='ring'?'selected':''}>薄環（I=MR²）</option></select></label></div>`:'';
+      $('physicsSettings').innerHTML=`<strong>進階動態物理參數</strong><p>${pulley?'加入輪子質量、轉動慣量與軸承摩擦；可關閉轉動慣量進行對照。':'支點摩擦與止擋碰撞可獨立設定。'}依然使用無重、不可伸長繩索和簡化二維剛體模型。</p>${pulleyExtra}${options.map(([key,label,unit,min,max,step])=>`<div class="physics-option"><div class="physics-option-head"><label for="phys-${key}">${label}</label><output id="physo-${key}">${fmt(physicsOptions[key],2)} ${unit}</output></div><input id="phys-${key}" type="range" data-phys="${key}" min="${min}" max="${max}" step="${step}" value="${physicsOptions[key]}"></div>`).join('')}`;
+      $('modelNote').textContent=mode==='lever'?
+        '進階模型：均勻剛性桿、點質量砝碼、支點摩擦與角度止擋；含簡化回彈。g = 10 N/kg。桿身不彎曲，碰撞不分析接觸應力。':
+        `進階模型：${mode==='fixed'?'固定輪只轉動，輪體質量不增加重物平移質量':'動滑輪本體隨重物一起移動，輪體質量同時產生平移與轉動慣量'}。繩索無重、不可伸長且不打滑；軸摩擦使用簡化的靜／動摩擦模型，不包含鬆繩及真實軸承細節。g = 10 N/kg。`;
+      $('physicsTelHelp').textContent=mode==='lever'?'轉動方程式 Iα＝淨力矩－軸摩擦－阻尼。支點靜摩擦可使小力矩不足以啟動；碰止擋時依回彈係數反彈。':`輪軸 Iα=(T₂−T₁)R−摩擦力矩；重物 (m+I/R²)a=nF−mg−摩擦力矩/R−cv。張力於自由運動時可不同，停在止擋處則由支撐反作用力平衡。`;
+    }
+    function renderPhysicsTelemetry(){
+      if(!dynamicMode)return;
+      const visible=showLivePhysics||phase==='finished'||!inquiry;
+      let rows;
+      if(mode==='lever'){
+        const {torque0,I}=physicsLeverProps();
+        const kinetic=.5*I*physical.angularVelocity**2;
+        rows=[['水平初始力矩',`${fmt(torque0,2)} N·m`],['轉動慣量',`${fmt(I,3)} kg·m²`],['角加速度',`${fmt(physical.angularAcceleration,2)} rad/s²`],['角速度',`${fmt(physical.angularVelocity,2)} rad/s`],['目前角度',`${fmt(physical.angle*180/Math.PI,1)}°`],['旋轉動能',`${fmt(kinetic,3)} J`]];
+      }else{
+        const p=physicalPulleyProperties(),tension=pulleyTensions(p);
+        const kinetic=.5*p.effectiveMass*physical.velocity**2;
+        rows=[['驅動合力 nF−mg',`${fmt(p.drive,2)} N`],['等效慣性質量',`${fmt(p.equivalentMass,3)} kg`],['輪子轉動慣量',`${fmt(p.inertia,4)} kg·m²`],['加速度',`${fmt(physical.acceleration,2)} m/s²`],['速度／位移',`${fmt(physical.velocity,2)} m/s ／ ${fmt(physical.y*100,1)} cm`],['動能（含輪轉）',`${fmt(kinetic,3)} J`],['固定繩端張力',tension?`${fmt(tension.one,2)} N`:'拘束／靜止'],['施力端張力',`${fmt(p.F,2)} N`]];
+        if(mode==='fixed')rows[6][0]='重物端張力';
+      }
+      $('physicsMetrics').innerHTML=rows.map(([k,v])=>`<div class="physics-metric"><span>${k}</span><b>${visible?v:'實驗後揭曉'}</b></div>`).join('');
+    }
+    function setDynamicMode(next){
+      if(dynamicMode===next)return;dynamicMode=next;
+      if(dynamicMode&&!inquiry){inquiry=true;$('toggleInquiry').classList.add('active');$('toggleInquiry').setAttribute('aria-pressed','true');$('inquiryBtnLabel').textContent='探究模式：開';}
+      resetTrial();drawControls();renderPhysicsSettings();render();drawFlow();
+    }
+    const suitableMeterRange=force=>force<=50?50:force<=100?100:200;
+    const meterTrackTop=72, meterTrackHeight=63;
+    function updateForceFeedback(){
+      const panel=$('forceFeedback');
+      const visible=mode==='lever'&&leverDisplayMode==='gauge';
+      panel.classList.toggle('hide',!visible);
+      if(!visible)return;
+      $('forceFeedbackValue').textContent=`${fmt(meterDisplayedForce)} N`;
+      $('forceFeedbackRange').textContent=`量程 ${meterRange} N`;
+      $('forceFeedbackFill').style.width=`${clamp(meterDisplayedForce/meterRange,0,1)*100}%`;
+    }
+    function updateMeterRangeUI(){
+      if(mode!=='lever'||leverDisplayMode!=='gauge')return;
+      document.querySelectorAll('button[data-meter-range]').forEach(el=>{
+        const active=Number(el.dataset.meterRange)===meterRange;
+        el.classList.toggle('active',active);
+        el.setAttribute('aria-pressed',String(active));
+        el.disabled=Number(el.dataset.meterRange)<state.lever.effortForce;
+      });
+    }
+    function setMeterRange(range){
+      if(mode!=='lever'||leverDisplayMode!=='gauge'||![50,100,200].includes(range))return;
+      if(range<state.lever.effortForce)return; // no clipping: display the entire measured force
+      meterRange=range;updateMeterRangeUI();renderVisual();
+    }
+    function setForce(value,{immediate=false}={}){
+      if(mode!=='lever'||leverDisplayMode!=='gauge')return;
+      if(immediate){if(meterRaf)cancelAnimationFrame(meterRaf);meterRaf=0;meterDisplayedForce=value;}
+      setField('effortForce',value,!immediate);
+      if(immediate){meterDisplayedForce=state.lever.effortForce;renderVisual();}
+    }
     const group={
-      lever:{title:'槓桿平衡實驗',intro:'拖曳負載砝碼與支點，並調整另一端的施力大小與位置，觀察槓桿如何轉動。',tag:'實驗 01 / 03',tip:'先不要顯示力矩，請學生預測哪一端會下降，再開啟數字驗證猜想。',observe:'把較重的砝碼放得靠近支點，再改變另一側的施力大小與施力位置，還能達到平衡嗎？',question:'只改變施力大小、不改變施力位置，與只改變施力位置、不改變施力大小，結果有何不同？',note:'教學模型以 g = 10 N/kg 估算，忽略槓桿本身的重量與摩擦；傾斜角度為定性示意，不代表實際運動速度。'},
+      lever:{title:'槓桿平衡實驗',intro:'拖曳負載砝碼與支點，並調整另一端的施力大小與位置，觀察槓桿如何轉動。',tag:'實驗 01 / 03',tip:'先不要顯示力矩，請學生預測哪一端會下降，再開啟數字驗證猜想。',observe:'把較重的砝碼放得靠近支點，再改變另一側的施力大小與施力位置，還能達到平衡嗎？',question:'只改變施力大小、不改變施力位置，與只改變施力位置、不改變施力大小，結果有何不同？',note:'教學模型以 g = 10 N/kg 估算，忽略槓桿自重與摩擦。砝碼依同密度的立方根比例縮放；槓桿傾斜及緩停效果屬示意，不代表實際運動速度或加速度。'},
       fixed:{title:'定滑輪實驗',intro:'調整重物重量與拉力，看看繩子拉了多遠、物體會上升多少。',tag:'實驗 02 / 03',tip:'讓學生比較「往下拉繩子」與「重物向上移動」的方向，找出定滑輪的用途。',observe:'理想定滑輪可以改變施力方向，但不會減少提起重物所需的力。',question:'如果把繩子往下拉 80 公分，重物會上升幾公分？',note:'理想化模型：忽略繩重、輪重及摩擦，假設外力控制拉繩位移；力不足時不會升起。圖中位移按畫面比例縮放，請以標示的 cm 數值為準。g = 10 N/kg。'},
       moving:{title:'動滑輪實驗',intro:'一個可以跟著重物升降的滑輪，兩段繩子一起分擔重量。',tag:'實驗 03 / 03',tip:'引導學生發現「省力不省距離」：拉繩距離是重物升高距離的兩倍。',observe:'理想動滑輪有兩段繩子支撐重物，每段繩子的張力大約是重力的一半。',question:'如果只用一半的力，為什麼要多拉一倍的繩子？',note:'理想化模型：上端繩頭固定、兩段繩子承重，忽略輪重、繩重與摩擦。圖中位移按畫面比例縮放，請以標示的 cm 數值為準。g = 10 N/kg。'}
     };
@@ -124,13 +342,17 @@
     };
     function leverSchema(){
       return leverDisplayMode==='weights'
-        ? [['LOAD · 負載設定',[['loadMass','負載砝碼','kg',.1,20,.1,'orange','密度固定，重量越大體積越大'],['loadPos','負載位置','cm',0,200,5,'orange','距離左端的位置']]],['EFFORT · 另一側砝碼',[['effortMass','施力砝碼','kg',.1,20,.1,'','維持原本的雙砝碼比較'],['effortPos','施力位置','cm',0,200,5,'','距離左端的位置']]],['PIVOT · 支點設定',[['pivot','支點位置','cm',10,190,5,'','可以拖曳黃色支點']]]]
-        : [['LOAD · 負載設定',[['loadMass','負載砝碼','kg',.1,20,.1,'orange','密度固定，重量越大體積越大'],['loadPos','負載位置','cm',0,200,5,'orange','距離左端的位置']]],['EFFORT · 施力設定',[['effortForce','施力大小','N',0,200,1,'','以量表顯示向下施力'],['effortPos','施力位置','cm',0,200,5,'','距離左端的位置']]],['PIVOT · 支點設定',[['pivot','支點位置','cm',10,190,5,'','可以拖曳黃色支點']]]];
+        ? [['LOAD · 負載設定',[['loadMass','負載砝碼','kg',.1,20,.1,'orange','密度固定，重量越大體積越大'],['loadPos','負載位置','cm',0,200,5,'orange','距離左端的位置']]],['EFFORT · 另一側砝碼',[['effortMass','施力砝碼','kg',0,20,.1,'','維持原本的雙砝碼比較'],['effortPos','施力位置','cm',0,200,5,'','距離左端的位置']]],['PIVOT · 支點設定',[['pivot','支點位置','cm',10,190,5,'','可以拖曳黃色支點']]]]
+        : [['LOAD · 負載設定',[['loadMass','負載砝碼','kg',.1,20,.1,'orange','密度固定，重量越大體積越大'],['loadPos','負載位置','cm',0,200,5,'orange','距離左端的位置']]],['EFFORT · 施力設定',[['effortForce','施力大小','N',0,200,1,'','施力量表會上升，並標示目前量程'],['effortPos','施力位置','cm',0,200,5,'','距離左端的位置']]],['PIVOT · 支點設定',[['pivot','支點位置','cm',10,190,5,'','可以拖曳黃色支點']]]];
     }
-    function schemaForMode(){return mode==='lever'?leverSchema():schemas[mode]}
+    function schemaForMode(){if(mode==='lever')return leverSchema();if(!dynamicMode)return schemas[mode];return schemas[mode].map(([title,fields])=>[title,fields.map(f=>f[0]==='pull'?['pull','最大拉繩行程','cm',0,150,5,'','繩端雙向最大位移，實際位移由合力決定']:f)])}
         function fieldHTML(f){const [key,name,unit,min,max,step,color,note]=f,val=state[mode][key];return `<div class="control ${color}" data-key="${key}"><div class="control-top"><label for="range-${key}">${name}<span class="mini-note">${note}</span></label><div class="value-input"><input aria-label="${name}數值" type="number" data-key="${key}" data-input="number" min="${min}" max="${max}" step="any" value="${pretty(val)}"><span>${unit}</span></div></div><input type="range" id="range-${key}" data-key="${key}" data-input="range" min="${min}" max="${max}" step="${step}" value="${val}" style="--fill:${(val-min)/(max-min)*100}%"><div class="control-endpoints"><span>${min} ${unit}</span><span>${max} ${unit}</span></div></div>`}
     function drawControls(){
       $('controls').innerHTML=schemaForMode().map(([title,fields])=>`<div class="control-group"><div class="controls-title">${title}</div>${fields.map(fieldHTML).join('')}</div>`).join('');
+      if(mode==='lever'&&leverDisplayMode==='gauge'){
+        $('controls').insertAdjacentHTML('beforeend',`<div class="meter-range-panel"><div class="meter-range-label">力計量程（N） · 可拖曳圖中的藍色刻度</div><div class="meter-range-options" role="group" aria-label="力計量程">${[50,100,200].map(r=>`<button type="button" class="meter-range-button ${meterRange===r?'active':''}" data-meter-range="${r}" aria-pressed="${meterRange===r}">${r} N</button>`).join('')}</div><div class="meter-bump"><button type="button" data-force-bump="-5" aria-label="施力減少5牛頓">− 5 N</button><button type="button" data-force-bump="5" aria-label="施力增加5牛頓">+ 5 N</button></div><p class="meter-range-hint">力計刻度隨量程變動。調整前請看量程上限；超出目前量程時會自動提高上限。</p></div>`);
+      }
+      updateMeterRangeUI();
       $('mainAction').textContent=mode==='lever'?(leverDisplayMode==='weights'?'⚖ 一鍵平衡兩側砝碼':'⚖ 一鍵計算所需施力'):'✓ 設為恰好足夠的力';
       $('sideHelp').textContent=mode==='lever'?(leverDisplayMode==='weights'?'拖曳兩側砝碼與支點，比較重量與位置對平衡的影響。':'拖曳負載砝碼與支點，並調整施力大小與位置。'):'調整重量、施力與預計拉動的繩長。';
     }
@@ -142,28 +364,100 @@
       });
     }
     function syncToggleLabel(){$('torqueBtnLabel').textContent=(showTorque?'隱藏':'顯示')+(mode==='lever'?'力矩':'計算');$('torqueBtnShort').textContent=mode==='lever'?'力矩':'計算';}
-    function updateLeverViewUI(){const show=mode==='lever';$('leverViewSwitch').classList.toggle('hide',!show);$('viewWeightMode').classList.toggle('active',leverDisplayMode==='weights');$('viewGaugeMode').classList.toggle('active',leverDisplayMode==='gauge');$('viewWeightMode').setAttribute('aria-pressed',String(leverDisplayMode==='weights'));$('viewGaugeMode').setAttribute('aria-pressed',String(leverDisplayMode==='gauge'));if(show)$('vizLegend').innerHTML=leverDisplayMode==='weights'?'<span class="legend-pill orange">左側負載</span><span class="legend-pill blue">右側砝碼</span>':'<span class="legend-pill orange">負載砝碼</span><span class="legend-pill blue">受力量表</span>'; }
-    function setLeverDisplayMode(next){if(!['weights','gauge'].includes(next)||leverDisplayMode===next)return;leverDisplayMode=next;resetTrial();drawControls();updateLeverViewUI();render();drawFlow();}
-    function setField(key,value){const schema=schemaForMode().flatMap(g=>g[1]).find(f=>f[0]===key);if(!schema||!Number.isFinite(value))return;const next=Math.round(clamp(value,schema[3],schema[4])*100)/100;if(next!==state[mode][key])resetTrial();state[mode][key]=next;syncControls();render();drawFlow();}
+    function updateLeverViewUI(){
+      const isLever=mode==='lever',weights=leverDisplayMode==='weights';
+      $('leverViewSwitch').classList.toggle('hide',!isLever);
+      $('viewWeightMode').classList.toggle('active',weights);
+      $('viewGaugeMode').classList.toggle('active',!weights);
+      $('viewWeightMode').setAttribute('aria-pressed',String(weights));
+      $('viewGaugeMode').setAttribute('aria-pressed',String(!weights));
+      if(!isLever)return;
+      $('vizLegend').innerHTML=weights?'<span class="legend-pill orange">負載砝碼</span><span class="legend-pill blue">施力砝碼</span>':'<span class="legend-pill orange">負載砝碼</span><span class="legend-pill blue">向下施力</span>';
+      $('experimentIntro').textContent=weights?'比較兩側砝碼的重量與位置，觀察槓桿平衡或傾斜。':'一側掛砝碼、另一側施力；拖曳藍色力計調整大小，觀察施力箭頭和槓桿反應。';
+      $('teacherTip').textContent=weights?'先不顯示力矩，試著用「輕砝碼離支點遠、重砝碼離支點近」來平衡。':'可以直接拖曳力計的刻度區調整施力，或用 ±5 N 按鈕微調；量表高度需搭配當前量程判讀。';
+      $('observeText').textContent=weights?'同樣的重量放在不同位置，槓桿的平衡會改變嗎？':'支點與重量都不變時，改變施力位置，需要的施力會變多還是變少？';
+      $('questionText').textContent=weights?'如果兩側砝碼一樣重，是否一定會平衡？':'如果把施力點移得更靠近支點，需要的施力為什麼可能變大？';
+    }
+    function setLeverDisplayMode(next){
+      if(!['weights','gauge'].includes(next)||leverDisplayMode===next)return;
+      if(meterRaf)cancelAnimationFrame(meterRaf);meterRaf=0;
+      // Keep physical force equivalent when swapping representations: F=m*g.
+      if(next==='gauge')state.lever.effortForce=Math.round(state.lever.effortMass*g*100)/100;
+      else state.lever.effortMass=Math.round(state.lever.effortForce/g*100)/100;
+      leverDisplayMode=next;meterRange=suitableMeterRange(state.lever.effortForce);meterDisplayedForce=state.lever.effortForce;
+      resetTrial();drag=null;drawControls();renderPhysicsSettings();updateLeverViewUI();$('dragHint').textContent=next==='gauge'?'↕ 拖曳力計調力　↔ 拖曳施力點':'↔ 可拖曳支點與砝碼';render();updateForceFeedback();drawFlow();
+    }
+        function animateMeter(to){
+      if(meterRaf)cancelAnimationFrame(meterRaf);
+      meterRaf=0;
+      if(reducedMotion.matches||mode!=='lever'||leverDisplayMode!=='gauge'){meterDisplayedForce=to;return;}
+      const from=meterDisplayedForce,start=performance.now(),duration=300;
+      function step(now){const t=clamp((now-start)/duration,0,1),e=1-Math.pow(1-t,3);meterDisplayedForce=from+(to-from)*e;
+        if(mode==='lever'&&leverDisplayMode==='gauge')renderVisual();
+        if(t<1)meterRaf=requestAnimationFrame(step);else {meterRaf=0;meterDisplayedForce=to;}
+      }
+      meterRaf=requestAnimationFrame(step);
+    }
+    function setField(key,value,animate=true){
+      const schema=schemaForMode().flatMap(g=>g[1]).find(f=>f[0]===key);
+      if(!schema||!Number.isFinite(value))return;
+      const next=Math.round(clamp(value,schema[3],schema[4])*100)/100;
+      if(next!==state[mode][key])resetTrial();
+      state[mode][key]=next;
+      if(mode==='lever'&&key==='effortForce'&&leverDisplayMode==='gauge'){if(next>meterRange){meterRange=suitableMeterRange(next);updateMeterRangeUI()}if(animate)animateMeter(next);else meterDisplayedForce=next;}
+      syncControls();render();drawFlow();
+    }
     function syncDiagramViewport(){
       const compact=window.innerWidth<=540;
       $('diagram').setAttribute('viewBox',compact?(mode==='lever'?'65 35 870 430':'168 40 664 430'):'0 0 1000 500');
     }
-    function switchMode(next){if(!(next in group))return;mode=next;drag=null;document.querySelectorAll('.mode').forEach(el=>{const active=el.dataset.mode===mode;el.classList.toggle('active',active);el.setAttribute('aria-selected',String(active));el.tabIndex=active?0:-1});$('panel-stage').setAttribute('aria-labelledby','tab-'+mode);
+    function switchMode(next){if(!(next in group))return;if(meterRaf)cancelAnimationFrame(meterRaf);meterRaf=0;meterDisplayedForce=state.lever.effortForce;meterRange=Math.max(meterRange,suitableMeterRange(meterDisplayedForce));mode=next;drag=null;document.querySelectorAll('.mode').forEach(el=>{const active=el.dataset.mode===mode;el.classList.toggle('active',active);el.setAttribute('aria-selected',String(active));el.tabIndex=active?0:-1});$('panel-stage').setAttribute('aria-labelledby','tab-'+mode);
       const c=group[mode];$('experimentTitle').textContent=c.title;$('experimentIntro').textContent=c.intro;$('experimentTag').textContent=c.tag;$('teacherTip').textContent=c.tip;$('observeText').textContent=c.observe;$('questionText').textContent=c.question;$('modelNote').textContent=c.note;
-      $('dragHint').classList.toggle('hide',mode!=='lever');updateLeverViewUI();$('vizLegend').innerHTML=mode==='lever'?(leverDisplayMode==='weights'?'<span class="legend-pill orange">左側負載</span><span class="legend-pill blue">右側砝碼</span>':'<span class="legend-pill orange">負載砝碼</span><span class="legend-pill blue">受力量表</span>'):'<span class="legend-pill orange">重物</span><span class="legend-pill blue">拉繩方向</span>';
-      resetTrial();drawControls();syncToggleLabel();syncDiagramViewport();render();drawFlow();
+      $('dragHint').classList.toggle('hide',mode!=='lever');$('dragHint').textContent=leverDisplayMode==='gauge'?'↕ 拖曳力計調力　↔ 拖曳施力點':'↔ 可拖曳支點與砝碼';updateLeverViewUI();$('vizLegend').innerHTML=mode==='lever'?(leverDisplayMode==='weights'?'<span class="legend-pill orange">左側負載</span><span class="legend-pill blue">右側砝碼</span>':'<span class="legend-pill orange">負載砝碼</span><span class="legend-pill blue">受力量表</span>'):'<span class="legend-pill orange">重物</span><span class="legend-pill blue">拉繩方向</span>';
+      resetTrial();drawControls();renderPhysicsSettings();syncToggleLabel();syncDiagramViewport();render();updateForceFeedback();drawFlow();
     }
     function statusHTML(kind,title,desc){return `<div class="status-icon" aria-hidden="true">${kind==='good'?'✓':kind==='warn'?'↗':'!'}</div><div><div class="status-title">${title}</div><div class="status-desc">${desc}</div></div>`}
     function statCards(rows){$('readout').innerHTML=rows.map(([label,value,unit])=>`<div class="read-card"><span class="read-label">${label}</span><span class="read-value">${value}<small> ${unit}</small></span></div>`).join('')}
     function detailsHTML(rows){$('details').innerHTML=`<div class="torque-head">∑ 公式與計算（國中延伸）</div><div class="formula-list">${rows.map(([a,b],i)=>`<div class="formula ${i===rows.length-1?'total':''}"><span>${a}</span><strong>${b}</strong></div>`).join('')}</div>`;$('details').classList.toggle('hide',!showTorque||!resultsVisible())}
     const bgSvg=`<defs><linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8aa9c9"/><stop offset="1" stop-color="#6286ae"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eff9ff"/><stop offset=".55" stop-color="#b3d4ec"/><stop offset="1" stop-color="#77a8ca"/></linearGradient><linearGradient id="weightA" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffc5aa"/><stop offset="1" stop-color="#e88260"/></linearGradient><linearGradient id="weightB" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#91ceff"/><stop offset="1" stop-color="#4d96db"/></linearGradient><marker id="arrowBlue" markerWidth="9" markerHeight="9" refX="5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#3185d3"/></marker><marker id="arrowOrange" markerWidth="9" markerHeight="9" refX="5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#e57c52"/></marker><marker id="arrowGrey" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse"><path d="M7 1 L0 3.5 L7 6" fill="none" stroke="#5e82a7" stroke-width="1.5"/></marker><filter id="smShadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#35668a" flood-opacity=".14"/></filter></defs>`;
     const svgText=(x,y,s,fill='#44627c',size=17,weight=700,anchor='middle',extra='')=>`<text x="${x}" y="${y}" fill="${fill}" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" ${extra}>${s}</text>`;
-    function massVisual(mass){const scale=Math.sqrt(clamp(mass,.1,20)/5);return {w:clamp(88*scale,34,128),h:clamp(66*scale,26,98),handleW:clamp(24*scale,12,36),handleH:clamp(10*scale,6,16),textSize:clamp(18*scale,11,21)}}
-    function weightBlock(x,y,mass,isA){const {w,h,handleW,handleH,textSize}=massVisual(mass),left=x-w/2,rx=Math.max(8,Math.min(14,w*.16));return `<g filter="url(#smShadow)"><path d="M${x-handleW/2} ${y+3} v-${handleH} h${handleW} v${handleH}" fill="none" stroke="${isA?'#c76a4d':'#3c7db6'}" stroke-width="${Math.max(3,Math.min(5,w*.06))}" stroke-linecap="round"/><rect x="${left}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="url(#${isA?'weightA':'weightB'})" stroke="${isA?'#dc7b5c':'#4b8fcd'}" stroke-width="2"/><path d="M${left+w*.16} ${y+Math.max(8,h*.16)} v${Math.max(16,h*.52)}" stroke="#fff" opacity=".43" stroke-width="${Math.max(4,Math.min(7,w*.08))}" stroke-linecap="round"/></g>${svgText(x,y+h/2+textSize*.26,`${fmt(mass)} kg`,'#fff',textSize,900)}`;}
-    function forceGauge(x,yTop,force,maxForce=200){const compact=window.innerWidth<=540,outerH=compact?166:176,outerW=compact?58:64,innerH=compact?124:134,innerW=compact?25:29,ratio=clamp(force/maxForce,0,1),fillH=Math.max(0,innerH*ratio),ix=x-innerW/2,iy=yTop+18+(innerH-fillH),oy=yTop,bx=x-outerW/2,label=compact?'受力':'受力量表';return `<g filter="url(#smShadow)"><rect x="${bx}" y="${oy}" width="${outerW}" height="${outerH}" rx="18" fill="#f6fbff" stroke="#6da9de" stroke-width="3"/><rect x="${ix}" y="${yTop+18}" width="${innerW}" height="${innerH}" rx="10" fill="#e8f4ff" stroke="#bfd9ee" stroke-width="2"/><rect x="${ix}" y="${iy}" width="${innerW}" height="${fillH}" rx="10" fill="url(#weightB)" opacity=".98"/><path d="M${ix+innerW/2} ${yTop+18} V${yTop+18+innerH}" stroke="#ffffff" opacity=".35" stroke-width="2" stroke-dasharray="3 8"/>${Array.from({length:5},(_,i)=>{const yy=yTop+18+innerH-(i*(innerH/4));return `<path d="M${x+18} ${yy} h10" stroke="#7ba3c7" stroke-width="2" stroke-linecap="round"/>`;}).join('')}<path d="M${x} ${yTop+outerH-10} v22" stroke="#5b9cda" stroke-width="5" stroke-linecap="round"/></g>${svgText(x,yTop-10,label,'#2f79bb',compact?15:17,900)}${svgText(x,yTop+outerH+18,`${fmt(force)} N`,'#206eaf',compact?18:19,900)}`;}
+    function massVisual(mass){
+      // Equal density: volume proportional to mass; every length proportional to the cube root.
+      const factor=Math.cbrt(Math.max(0,mass)/5);
+      return {w:Math.round(81*factor*100)/100,h:Math.round(62*factor*100)/100,handleW:Math.max(9,24*factor),handleH:Math.max(5,10*factor)};
+    }
+    function weightBlock(x,y,mass,isA){
+      if(mass<=0)return svgText(x,y+26,'0 kg',isA?'#b66c4b':'#3c81b7',16,850);
+      const {w,h,handleW,handleH}=massVisual(mass),left=x-w/2,small=w<65||h<50,textSize=small?15:Math.min(20,Math.max(15,w*.21));
+      const txtY=small?y+h+19:y+h/2+textSize*.32;
+      return `<g filter="url(#smShadow)"><path d="M${x-handleW/2} ${y+3} v-${handleH} h${handleW} v${handleH}" fill="none" stroke="${isA?'#bd7353':'#377dac'}" stroke-width="${Math.min(5,Math.max(2.8,w*.06))}" stroke-linecap="round"/><rect x="${left}" y="${y}" width="${w}" height="${h}" rx="${Math.max(4,w*.13)}" fill="url(#${isA?'weightA':'weightB'})" stroke="${isA?'#dc7b5c':'#4b8fcd'}" stroke-width="2"/><path d="M${left+w*.18} ${y+h*.17} v${h*.56}" stroke="#fff" opacity=".42" stroke-width="${Math.max(2,w*.072)}" stroke-linecap="round"/></g>${svgText(x,txtY,`${fmt(mass)} kg`,small?(isA?'#aa593d':'#3575b4'):'#fff',textSize,900)}`;
+    }
+        function forceGauge(x,yTop,force){
+      const compact=window.innerWidth<=540,w=compact?70:76,h=112,ix=x-15,innerY=yTop+25,trackH=63;
+      const range=meterRange,fillH=trackH*clamp(meterDisplayedForce/range,0,1),fillY=innerY+trackH-fillH;
+      return `<g class="force-meter" aria-label="力量計讀數 ${fmt(force)} 牛頓，量程 ${range} 牛頓">
+        <rect x="${x-w/2}" y="${yTop}" width="${w}" height="${h}" rx="15" fill="#eef8ff" stroke="#397cbd" stroke-width="3" filter="url(#smShadow)"/>
+        <rect x="${ix}" y="${innerY}" width="30" height="${trackH}" rx="7" fill="#d7e9fa" stroke="#95bfdf" stroke-width="1.5"/>
+        <rect x="${ix}" y="${fillY}" width="30" height="${fillH}" rx="${fillH>10?6:2}" fill="url(#weightB)"/>
+        ${Array.from({length:5},(_,i)=>{let yy=innerY+trackH-i*trackH/4;return `<path d="M${x+17} ${yy} h${i%2===0?11:7}" stroke="#528cb9" stroke-width="1.8" stroke-linecap="round"/>`;}).join('')}
+        <path d="M${x} ${yTop+7} v10" stroke="#4586c2" stroke-width="4" stroke-linecap="round"/>
+        <path d="M${x} ${yTop+h} v10" stroke="#4586c2" stroke-width="4" stroke-linecap="round"/>
+        <rect data-drag="forceGauge" x="${x-w/2-3}" y="${yTop+14}" width="${w+6}" height="${h-7}" rx="13" fill="transparent" stroke="transparent" stroke-width="1" pointer-events="all"/>
+      </g>
+      ${svgText(x,yTop-9,compact?'力計':'施力量表','#287bb9',16,900)}
+      ${svgText(x,yTop+h+19,`${fmt(meterDisplayedForce)} N`,'#216fac',20,900)}
+      ${svgText(x,yTop+h+35,`0–${range} N`,'#547fa5',12,800)}`;
+    }
     function leverModel(){const s=state.lever,d1=Math.abs(s.loadPos-s.pivot),d2=Math.abs(s.effortPos-s.pivot),F1=s.loadMass*g,F2=leverDisplayMode==='weights'?s.effortMass*g:s.effortForce,t1=F1*(s.loadPos-s.pivot)/100,t2=F2*(s.effortPos-s.pivot)/100,total=t1+t2,threshold=.08,balance=Math.abs(total)<=threshold,side=total>0?'右側下沉':'左側下沉';return {s,d1,d2,F1,F2,t1,t2,total,balance,side}}
-    function renderLever(visualOnly=false){const {s,d1,d2,F1,F2,t1,t2,total,balance,side}=leverModel();const compact=window.innerWidth<=540;const x=cm=>105+cm/200*790,px=x(s.pivot),py=223,ratio=Math.abs(total)/(Math.abs(t1)+Math.abs(t2)+.1),angle=(balance?0:Math.sign(total)*Math.min(13,ratio*31))*effectiveProgress();const rad=angle*Math.PI/180;
+    function leverDisplayProgress(){
+      if(!inquiry)return 1;
+      if(phase==='ready')return 0;
+      if(phase==='finished')return 1;
+      const t=clamp(elapsedMs/durations[animationSpeed],0,1);
+      const settle=t>.64?0.07*Math.sin(Math.PI*(t-.64)/.36):0;
+      return smoothstep(t)+settle;
+    }
+    function renderLever(visualOnly=false){const {s,d1,d2,F1,F2,t1,t2,total,balance,side}=leverModel();const compact=window.innerWidth<=540;const x=cm=>105+cm/200*790,px=x(s.pivot),py=223,ratio=Math.abs(total)/(Math.abs(t1)+Math.abs(t2)+.1),angle=dynamicMode?physical.angle*180/Math.PI:(balance?0:Math.sign(total)*Math.min(13,ratio*31))*leverDisplayProgress();const rad=angle*Math.PI/180;
       const point=c=>({x:px+(x(c)-px)*Math.cos(rad),y:py+(x(c)-px)*Math.sin(rad)}),P1=point(s.loadPos),P2=point(s.effortPos);
       let svg=bgSvg+`<path d="M69 318 H931" stroke="#cbddeb" stroke-width="3" stroke-linecap="round"/><path d="M105 ${py} H895" stroke="#8baaca" stroke-dasharray="8 9" opacity=".7"/>`;
       for(let cm=0;cm<=200;cm+=10){const xx=x(cm),big=cm%50===0;svg+=`<path d="M${xx} 364 v${big?15:8}" stroke="#9cb5ca" stroke-width="${big?2:1}"/>`;if(big)svg+=svgText(xx,400,`${cm}`, '#8da4bb',15,750)}svg+=svgText(501,430,'槓桿上的位置（cm）','#8aa0b6',15,750);
@@ -171,18 +465,37 @@
       svg+=`<g transform="rotate(${angle} ${px} ${py})"><rect x="105" y="210" width="790" height="26" rx="11" fill="url(#beam)"/><path d="M130 214 H870" stroke="#dcecff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round"/></g>`;
       const loadBlock=(p,m,key)=>`<path d="M${p.x} ${p.y+12} v42" stroke="#d67857" stroke-width="7" stroke-linecap="round"/>${weightBlock(p.x,p.y+65,m,true)}<circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="24" fill="#f59b70" stroke="#fff" stroke-width="5" filter="url(#smShadow)"/><circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="7" fill="#fff"/>`;
       const weightEffort=(p,m,key)=>`<path d="M${p.x} ${p.y+12} v42" stroke="#4d98da" stroke-width="7" stroke-linecap="round"/>${weightBlock(p.x,p.y+65,m,false)}<circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="24" fill="#5da6e5" stroke="#fff" stroke-width="5" filter="url(#smShadow)"/><circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="7" fill="#fff"/>`;
-      const gaugeEffort=(p,key)=>`<path d="M${p.x} ${p.y+8} v32" stroke="#4d98da" stroke-width="7" stroke-linecap="round"/><path d="M${p.x} ${p.y+10} V${p.y+76}" stroke="#3185d3" stroke-width="8" stroke-linecap="round" marker-end="url(#arrowBlue)"/>${forceGauge(p.x,Math.min(compact?226:214,Math.max(compact?140:132,p.y+80)),s.effortForce,200)}<circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="24" fill="#5da6e5" stroke="#fff" stroke-width="5" filter="url(#smShadow)"/><circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="7" fill="#fff"/>`;
+      const gaugeEffort=(p,key)=>{
+        const arrowL=meterDisplayedForce<.01?0:Math.max(18,20+56*Math.sqrt(clamp(meterDisplayedForce/200,0,1)));
+        const arrowSvg=arrowL>0?`<path class="force-arrow" d="M${p.x} ${p.y+11} v${arrowL}" stroke="#3185d3" stroke-width="${6+3*Math.sqrt(meterDisplayedForce/200)}" stroke-linecap="round" marker-end="url(#arrowBlue)"/>`:
+          `<path d="M${p.x} ${p.y+11} v20" stroke="#93bce0" stroke-width="4" stroke-dasharray="4 7"/>`;
+        const meterX=(Math.abs(p.x-P1.x)<105)?clamp(p.x+(p.x>=px?94:-94),146,855):clamp(p.x,145,855);
+        const link=Math.abs(meterX-p.x)>2?`<path d="M${meterX} 171 L${p.x} ${p.y-30}" fill="none" stroke="#81acd3" stroke-width="2" stroke-dasharray="4 6"/>`:'';
+        return `${link}${forceGauge(meterX,47,s.effortForce)}${arrowSvg}<circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="24" fill="#5da6e5" stroke="#fff" stroke-width="5" filter="url(#smShadow)"/><circle class="svg-drag" data-drag="${key}" cx="${p.x}" cy="${p.y}" r="7" fill="#fff"/>`;
+      };
       svg+=loadBlock(P1,s.loadMass,'loadPos')+(leverDisplayMode==='weights'?weightEffort(P2,s.effortMass,'effortPos'):gaugeEffort(P2,'effortPos'));svg+=`<circle class="svg-drag" data-drag="pivot" cx="${px}" cy="${py}" r="17" fill="#f4c655" stroke="#fff" stroke-width="5"/><circle class="svg-drag" data-drag="pivot" cx="${px}" cy="${py}" r="5" fill="#a27827"/>`;
-      const close=Math.abs(P1.x-P2.x)<105;const leftLabel=compact?'負載':'負載砝碼',rightLabel=leverDisplayMode==='weights'?(compact?'右砝碼':'施力砝碼'):(compact?'受力':'受力端');
-      svg+=svgText(P1.x,Math.max(79,P1.y-(close?57:30)),leftLabel,'#bd663f',compact?15:17,900)+svgText(P2.x,Math.max(79,P2.y-30),rightLabel,'#347bb7',compact?15:17,900)+svgText(px,340,'▲ 支點','#ad862e',15,900);
-      if(showTorque&&resultsVisible()){const armY=119;for(const [xx,color,label,offset] of [[x(s.loadPos),'#e28b64',`負載力臂 ${fmt(d1)} cm`,24],[x(s.effortPos),'#3b91d8',`${leverDisplayMode==='weights'?'施力砝碼':'施力'}力臂 ${fmt(d2)} cm`,-20]]){svg+=`<path d="M${xx} ${armY+14} V193" stroke="${color}" stroke-width="2" stroke-dasharray="5 7" opacity=".7"/>`;if(Math.abs(xx-px)>16){const yy=armY+offset;svg+=`<path d="M${Math.min(px,xx)} ${yy} H${Math.max(px,xx)}" stroke="${color}" stroke-width="2.5" marker-start="url(#arrowGrey)" marker-end="url(#arrowGrey)"/>`;svg+=svgText((xx+px)/2,yy-8,label,color,14,800)}}}
-      $('diagram').innerHTML=svg;if(visualOnly)return;
-      statCards(leverDisplayMode==='weights'?[['負載砝碼',fmt(s.loadMass),'kg'],['施力砝碼',fmt(s.effortMass),'kg'],['槓桿狀態',resultsVisible()?(balance?'平衡':side):'？','']]:[['負載砝碼',fmt(s.loadMass),'kg'],['施力大小',fmt(s.effortForce),'N'],['槓桿狀態',resultsVisible()?(balance?'平衡':side):'？','']]);
+      const close=Math.abs(P1.x-P2.x)<105;const leftLabel=compact?'負載':'負載砝碼',rightLabel=compact?'右砝碼':'施力砝碼';
+      svg+=svgText(P1.x,Math.max(79,P1.y-(close?57:30)),leftLabel,'#bd663f',compact?15:17,900);
+      if(leverDisplayMode==='weights')svg+=svgText(P2.x,Math.max(79,P2.y-30),rightLabel,'#347bb7',compact?15:17,900);
+      svg+=svgText(px,340,'▲ 支點','#ad862e',15,900);
+      if(showTorque&&resultsVisible()){const armY=leverDisplayMode==='gauge'?185:119;for(const [xx,color,label,offset] of [[x(s.loadPos),'#e28b64',`負載力臂 ${fmt(d1)} cm`,24],[x(s.effortPos),'#3b91d8',`${leverDisplayMode==='weights'?'施力砝碼':'施力'}力臂 ${fmt(d2)} cm`,-20]]){svg+=`<path d="M${xx} ${armY+14} V193" stroke="${color}" stroke-width="2" stroke-dasharray="5 7" opacity=".7"/>`;if(Math.abs(xx-px)>16){const yy=armY+offset;svg+=`<path d="M${Math.min(px,xx)} ${yy} H${Math.max(px,xx)}" stroke="${color}" stroke-width="2.5" marker-start="url(#arrowGrey)" marker-end="url(#arrowGrey)"/>`;svg+=svgText((xx+px)/2,yy-8,label,color,14,800)}}}
+      $('diagram').innerHTML=svg;updateForceFeedback();if(visualOnly)return;
+      const isBalanced=dynamicMode?Math.abs(physicsLeverProps().torque0)<.08:balance,tipSide=dynamicMode?(physicsLeverProps().torque0>0?'右側下沉':'左側下沉'):side;
+      statCards(leverDisplayMode==='weights'?[['負載砝碼',fmt(s.loadMass),'kg'],['施力砝碼',fmt(s.effortMass),'kg'],['槓桿狀態',resultsVisible()?(isBalanced?'平衡':tipSide):'？','']]:[['負載砝碼',fmt(s.loadMass),'kg'],['施力大小',fmt(s.effortForce),'N'],['槓桿狀態',resultsVisible()?(isBalanced?'平衡':tipSide):'？','']]);
+      if(dynamicMode){
+        const {torque0,I}=physicsLeverProps();
+        const displayed=Math.abs(torque0)<.08?'由靜止保持平衡':physical.angle>.005?'向右轉動':physical.angle<-.005?'向左轉動':'準備釋放';
+        $('status').className='status '+(Math.abs(torque0)<.08?'':'warn');
+        $('status').innerHTML=!resultsVisible()?statusHTML('warn','動態實驗進行中','可觀察起動、加速、擋板碰撞；完成後查看角加速度與力矩。'):statusHTML('good',displayed,`初始力矩 ${fmt(torque0,2)} N·m，轉動慣量 ${fmt(I,2)} kg·m²，模擬 ${fmt(physical.clock,1)} 秒。`);
+        const bm=physicsOptions.beamMass,initial=torque0;
+        detailsHTML([['負載重力矩',`${fmt(F1*(s.loadPos-s.pivot)/100,2)} N·m`],['另一端力矩',`${fmt(F2*(s.effortPos-s.pivot)/100,2)} N·m`],['槓桿自重力矩',`${fmt(bm*g*(100-s.pivot)/100,2)} N·m`],['τ₀ = Iα₀',`${fmt(initial,2)} N·m ÷ ${fmt(I,3)} kg·m² = ${fmt(initial/I,2)} rad/s²`]]);
+        renderPhysicsTelemetry();return;
+      }
       const cls=balance?'':'warn';$('status').className='status '+(!resultsVisible()?'warn':cls);$('status').innerHTML=!resultsVisible()?statusHTML('warn',phase==='running'?'實驗進行中…':phase==='paused'?'已暫停，請仔細觀察':'答案暫時保密','先觀察條件並猜想，再按「開始實驗」揭曉槓桿轉動結果。'):balance?statusHTML('good','槓桿達到平衡',leverDisplayMode==='weights'?'兩側砝碼產生的順、逆時針力矩互相抵銷。':'負載砝碼與受力端產生的順、逆時針力矩互相抵銷。'):statusHTML('warn',`${side}（示意）`,(Math.sign(t1)===Math.sign(t2)&&t1!==0&&t2!==0)?(leverDisplayMode==='weights'?'兩個砝碼位於支點同側，產生相同方向的力矩。':'負載與施力位於支點同側，產生相同方向的力矩。'):(leverDisplayMode==='weights'?'改變砝碼重量或力臂，試著讓順時針與逆時針力矩相等。':'改變砝碼重量、施力大小或力臂，試著讓順時針與逆時針力矩相等。'));
       const clockwise=Math.max(0,t1)+Math.max(0,t2),counter=Math.max(0,-t1)+Math.max(0,-t2);detailsHTML([['負載力矩＝重力 × 力臂',`${fmt(F1)} N × ${fmt(d1/100,2)} m = ${fmt(Math.abs(t1),2)} N·m`],[leverDisplayMode==='weights'?'施力砝碼力矩＝重力 × 力臂':'施力力矩＝施力 × 力臂',`${fmt(F2)} N × ${fmt(d2/100,2)} m = ${fmt(Math.abs(t2),2)} N·m`],['順時針／逆時針',`${fmt(clockwise,2)} ／ ${fmt(counter,2)} N·m`],['淨力矩（順時針為正）',`${fmt(total,2)} N·m`]]);
     }
-        function pulleyModel(){const s=state[mode],strands=mode==='fixed'?1:2,W=s.mass*g,need=W/strands,canLift=s.force+1e-7>=need,lift=canLift?s.pull/strands:0,movement=canLift?s.pull:0;return {s,strands,W,need,canLift,lift,movement}}
-    function pulleyBase(){return bgSvg+`<rect x="240" y="61" width="518" height="23" rx="7" fill="#8aa8c6" stroke="#658aad" stroke-width="2"/><path d="M274 61 V49 M323 61 V49 M674 61 V49 M724 61 V49" stroke="#a9bfce" stroke-width="6" stroke-linecap="round"/><path d="M120 435 H890" stroke="#d7e4ef" stroke-width="2"/><path d="M130 447 h740" stroke="#e1ebf4" stroke-width="7" stroke-linecap="round"/>`}
+        function pulleyModel(){const s=state[mode],strands=mode==='fixed'?1:2,W=s.mass*g,need=W/strands,canLift=s.force+1e-7>=need,lift=dynamicMode?physical.y*100:(canLift?s.pull/strands:0),movement=dynamicMode?physical.y*100*strands:(canLift?s.pull:0);return {s,strands,W,need,canLift,lift,movement}}
+    function pulleyBase(){return bgSvg+`<rect x="240" y="61" width="518" height="23" rx="7" fill="#8aa8c6" stroke="#658aad" stroke-width="2"/><path d="M274 61 V49 M323 61 V49 M674 61 V49 M724 61 V49" stroke="#a9bfce" stroke-width="6" stroke-linecap="round"/><path d="M120 463 H890" stroke="#d7e4ef" stroke-width="2"/><path d="M130 469 h740" stroke="#e1ebf4" stroke-width="7" stroke-linecap="round"/>`}
     function pulleyWheel(cx,cy,r,rotation=0){return `<g filter="url(#smShadow)"><circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#metal)" stroke="#658eb2" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="${r-14}" fill="none" stroke="#d5edff" stroke-width="8" opacity=".85"/><g transform="rotate(${rotation.toFixed(3)} ${cx} ${cy})">${Array.from({length:6},(_,i)=>`<path d="M${cx} ${cy-27} V${cy-r+21}" stroke="#6d99b9" stroke-width="6" stroke-linecap="round" transform="rotate(${i*60} ${cx} ${cy})"/>`).join('')}<circle cx="${cx}" cy="${cy-r+15}" r="6" fill="#fff7cc" stroke="#6386aa" stroke-width="2"/></g><circle cx="${cx}" cy="${cy}" r="20" fill="#6288b0" stroke="#eaf7ff" stroke-width="6"/><circle cx="${cx}" cy="${cy}" r="5" fill="#f8fbff"/></g>`}
     function travelGuide(x,fromY,toY,label,side='left'){
       if(Math.abs(toY-fromY)<7||phase==='ready'&&inquiry)return '';
@@ -193,35 +506,47 @@
     function renderFixed(visualOnly=false){
       const {s,W,need,canLift,lift,movement}=pulleyModel();
       const k=.42; // Keep load clear of the upper pulley even at 150 cm of requested travel.
-      const motion=movement*k*effectiveProgress(),cy=191,cx=491,r=68,left=cx-r,right=cx+r,wy=319-motion,ey=292+motion;
+      const motion=dynamicMode?physical.y*100*k:movement*k*effectiveProgress(),cy=191,cx=491,r=68,left=cx-r,right=cx+r,originY=dynamicMode?320:333,wy=originY-motion,ey=292+motion;
       const rope=`M${left} ${wy-11} V${cy} A${r} ${r} 0 0 1 ${right} ${cy} V${ey}`;
       let svg=pulleyBase();
-      if(motion>5)svg+=`<rect x="${left-42}" y="319" width="84" height="63" rx="12" fill="none" stroke="#ef9978" stroke-dasharray="7 7" stroke-width="2" opacity=".60"/>`;
-      svg+=`<path d="M${cx} 84 V125" stroke="#7092b2" stroke-width="12" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#d8ab69" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="${rope}" fill="none" stroke="#ffe0a0" stroke-width="4" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#fff8e4" opacity=".62" stroke-width="2" stroke-dasharray="7 30" stroke-dashoffset="${-motion*1.4}"/>${pulleyWheel(cx,cy,r,motion/r*180/Math.PI)}`;
+      if(Math.abs(motion)>5){const {w,h}=massVisual(s.mass);svg+=`<rect x="${left-w/2}" y="${originY}" width="${w}" height="${h}" rx="12" fill="none" stroke="#ef9978" stroke-dasharray="7 7" stroke-width="2" opacity=".60"/>`;}
+      svg+=`<path d="M${cx} 84 V125" stroke="#7092b2" stroke-width="12" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#d8ab69" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="${rope}" fill="none" stroke="#ffe0a0" stroke-width="4" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#fff8e4" opacity=".62" stroke-width="2" stroke-dasharray="7 30" stroke-dashoffset="${-motion*1.4}"/>${pulleyWheel(cx,cy,r,dynamicMode?physical.y/physicsOptions.pulleyRadius*180/Math.PI:motion/r*180/Math.PI)}`;
       svg+=`<path d="M${left} ${wy-11} V${wy+4}" stroke="#d0a05a" stroke-width="7"/>${weightBlock(left,wy,s.mass,true)}`;
       svg+=`<circle cx="${right}" cy="${ey}" r="10" fill="#e7ac60" stroke="#fff" stroke-width="4"/>${arrow(right+89,ey-47,ey+13)}`;
       svg+=svgText(left-64,wy+21,'重物','#cb7451',18,900,'end')+svgText(right+65,130,'向下拉','#368dd4',18,900,'start')+svgText(cx,112,'固定在上方','#6986a4',14,800);
-      if(motion>7)svg+=travelGuide(305,319,wy,`↑ ${fmt(lift,2)} cm`,'left')+travelGuide(790,292,ey,`↓ ${fmt(movement,2)} cm`,'right');
+      if(Math.abs(motion)>7){const actualLift=dynamicMode?physical.y*100:lift,actualRope=dynamicMode?physical.y*100:movement;svg+=travelGuide(305,originY,wy,`${actualLift>=0?'↑':'↓'} ${fmt(Math.abs(actualLift),2)} cm`,'left')+travelGuide(790,292,ey,`${actualRope>=0?'↓':'↑'} ${fmt(Math.abs(actualRope),2)} cm`,'right');}
+      if(dynamicMode&&showTorque&&(showLivePhysics||phase==='finished')){const p=physicalPulleyProperties(),t=pulleyTensions(p);if(t)svg+=svgText(left-25,156,`T重物 ${fmt(t.one,1)} N`,'#c06a48',14,800,'end')+svgText(right+25,192,`T拉端 ${fmt(t.two,1)} N`,'#267bb9',14,800,'start');}
       $('diagram').innerHTML=svg;
       if(!visualOnly)renderPulleyText({s,W,need,canLift,lift,movement,strands:1});
     }
     function renderMoving(visualOnly=false){
       const {s,W,need,canLift,lift,movement}=pulleyModel();
-      const k=.64,travel=lift*k*effectiveProgress(),ropeTravel=movement*k*effectiveProgress(),cy=274-travel,cx=493,r=68,left=cx-r,right=cx+r,ey=243-ropeTravel;
+      const k=.64,travel=dynamicMode?physical.y*100*k:lift*k*effectiveProgress(),ropeTravel=dynamicMode?physical.y*100*2*k:movement*k*effectiveProgress(),baseCy=dynamicMode?dynamicPulleyOrigin().start:274,cy=baseCy-travel,cx=493,r=68,left=cx-r,right=cx+r,ey=243-ropeTravel;
       const rope=`M${left} 84 V${cy} A${r} ${r} 0 0 0 ${right} ${cy} V${ey}`;
       let svg=pulleyBase();
-      if(travel>5)svg+=`<circle cx="${cx}" cy="274" r="${r}" fill="none" stroke="#91bad9" stroke-width="2" stroke-dasharray="8 8" opacity=".6"/><rect x="${cx-42}" y="368" width="84" height="63" rx="12" fill="none" stroke="#ef9978" stroke-dasharray="7 7" stroke-width="2" opacity=".5"/>`;
-      svg+=`<path d="${rope}" fill="none" stroke="#d8ab69" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#ffe0a0" stroke-width="4" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#fff8e4" opacity=".62" stroke-width="2" stroke-dasharray="7 30" stroke-dashoffset="${ropeTravel*.8}"/><rect x="${left-15}" y="76" width="30" height="20" rx="6" fill="#e9b65e" stroke="#a9813e" stroke-width="3"/>${pulleyWheel(cx,cy,r,-travel/r*180/Math.PI)}`;
-      const wy=cy+94;
+      if(Math.abs(travel)>5){const {w,h}=massVisual(s.mass);svg+=`<circle cx="${cx}" cy="${baseCy}" r="${r}" fill="none" stroke="#91bad9" stroke-width="2" stroke-dasharray="8 8" opacity=".6"/><rect x="${cx-w/2}" y="${baseCy+86}" width="${w}" height="${h}" rx="12" fill="none" stroke="#ef9978" stroke-dasharray="7 7" stroke-width="2" opacity=".5"/>`;}
+      svg+=`<path d="${rope}" fill="none" stroke="#d8ab69" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#ffe0a0" stroke-width="4" stroke-linecap="round"/><path d="${rope}" fill="none" stroke="#fff8e4" opacity=".62" stroke-width="2" stroke-dasharray="7 30" stroke-dashoffset="${ropeTravel*.8}"/><rect x="${left-15}" y="76" width="30" height="20" rx="6" fill="#e9b65e" stroke="#a9813e" stroke-width="3"/>${pulleyWheel(cx,cy,r,dynamicMode?-physical.y/physicsOptions.pulleyRadius*180/Math.PI:-travel/r*180/Math.PI)}`;
+      const wy=cy+86;
       svg+=`<path d="M${cx} ${cy+15} V${wy-7}" stroke="#6e91b3" stroke-width="12" stroke-linecap="round"/>${weightBlock(cx,wy,s.mass,true)}`;
       svg+=`<circle cx="${right}" cy="${ey}" r="10" fill="#e7ac60" stroke="#fff" stroke-width="4"/>${arrow(right+83,ey+57,ey-17,true)}`;
-      svg+=svgText(344,128,'固定繩頭','#64809e',16,850,'end')+svgText(cx+116,344,resultsVisible()?(canLift?'滑輪與重物一起上升':'施力不足，重物不動'):'滑輪與重物連在一起','#6b82a0',15,800,'start')+svgText(right+76,122,'向上拉','#368dd4',18,900,'start');
-      if(travel>7)svg+=travelGuide(339,274,cy,`↑ ${fmt(lift,2)} cm`,'left')+travelGuide(790,243,ey,`↑ ${fmt(movement,2)} cm`,'right');
+      svg+=(window.innerWidth>1100?svgText(344,128,'固定繩頭','#64809e',16,850,'end'):'')+svgText(cx+116,344,resultsVisible()?(dynamicMode?(physical.y>0.001?'滑輪與重物一起上升':physical.y<-.001?'拉力不足，重物下降':'重物保持靜止'):(canLift?'滑輪與重物一起上升':'施力不足，重物不動')):'滑輪與重物連在一起','#6b82a0',15,800,'start')+svgText(right+76,122,'向上拉','#368dd4',18,900,'start');
+      if(Math.abs(travel)>7){const actualLift=dynamicMode?physical.y*100:lift,actualRope=dynamicMode?physical.y*200:movement;svg+=travelGuide(339,baseCy,cy,`${actualLift>=0?'↑':'↓'} ${fmt(Math.abs(actualLift),2)} cm`,'left')+travelGuide(790,243,ey,`${actualRope>=0?'↑':'↓'} ${fmt(Math.abs(actualRope),2)} cm`,'right');}
       if(showTorque&&resultsVisible()){svg+=svgText(209,358,'兩段繩子分擔重力','#2e83bb',16,850,'start');svg+=`<path d="M280 365 L388 ${cy+48}" fill="none" stroke="#74a7cf" stroke-dasharray="5 6" stroke-width="2"/>`}
+      if(dynamicMode&&showTorque&&(showLivePhysics||phase==='finished')){const p=physicalPulleyProperties(),t=pulleyTensions(p);if(t)svg+=svgText(left-18,177,`T固定 ${fmt(t.one,1)} N`,'#c06a48',14,800,'end')+svgText(right+26,195,`T施力 ${fmt(t.two,1)} N`,'#267bb9',14,800,'start');}
       $('diagram').innerHTML=svg;
       if(!visualOnly)renderPulleyText({s,W,need,canLift,lift,movement,strands:2});
     }
     function renderPulleyText({s,W,need,canLift,lift,movement,strands}){
+      if(dynamicMode){
+        const p=physicalPulleyProperties(),startDynamics=pulleyDynamics(p,0),initialAccel=startDynamics.a;
+        statCards([['施力',fmt(s.force),'N'],['初始加速度',resultsVisible()?fmt(initialAccel,2):'？',resultsVisible()?'m/s²':''],['重物位移',resultsVisible()?fmt(physical.y*100,1):'？',resultsVisible()?'cm':'']]);
+        $('status').className='status '+(!resultsVisible()?'warn':startDynamics.sticking?'':'warn');
+        const heading=physical.y>.001?'重物向上位移':physical.y<-.001?'重物向下位移':'重物保持原位';
+        const note=physical.collision?'重物已達行程邊界。':startDynamics.sticking?'靜摩擦可抵住初始驅動力，重物由靜止保持不動。':'加速度同時受輪體轉動慣量、軸摩擦與阻尼影響。';
+        $('status').innerHTML=!resultsVisible()?statusHTML('warn','物理實驗進行中','由牛頓運動定律與輪軸轉動定律，同步更新輪子轉動、速度和位置。'):statusHTML('good',heading,note);
+        detailsHTML([['平移質量 m',`${fmt(p.m,2)} kg`],['輪子轉動慣量 I',`${fmt(p.inertia,4)} kg·m²`],['等效慣性質量 I/R²',`${fmt(p.equivalentMass,3)} kg`],['驅動合力 nF − mg',`${p.n} × ${fmt(s.force)} − ${fmt(p.W,2)} = ${fmt(p.drive,2)} N`],['輪軸摩擦阻力矩 / R',`${fmt(physicsOptions.axleFriction,2)} ÷ ${fmt(p.radius,2)} = ${fmt(p.resistance,2)} N`],['從靜止釋放的加速度',`${fmt(initialAccel,3)} m/s²`],['拉繩位移 = n × 重物位移',`${fmt(physical.y*100*p.n,2)} cm = ${p.n} × ${fmt(physical.y*100,2)} cm`]]);
+        renderPhysicsTelemetry();return;
+      }
       statCards([['重物所受重力',fmt(W),'N'],['理想所需拉力',resultsVisible()?fmt(need):'？',resultsVisible()?'N':''],['實驗上升高度',resultsVisible()?fmt(lift,2):'？',resultsVisible()?'cm':'']]);
       const exact=Math.abs(s.force-need)<.001;
       $('status').className='status '+(!resultsVisible()?'warn':canLift?'':'alert');
@@ -229,18 +554,18 @@
       detailsHTML([['重力 W = m × g',`${fmt(s.mass)} kg × 10 N/kg = ${fmt(W)} N`],['有效承重繩段數',`${strands} 段`],['理想所需拉力 F = W ÷ 段數',`${fmt(W)} ÷ ${strands} = ${fmt(need)} N`],['理想上升距離 = 拉繩距離 ÷ 段數',`${canLift?`${fmt(s.pull)} ÷ ${strands}`:'力不足，無位移'} = ${fmt(lift,2)} cm`]]);
     }
     function renderVisual(){if(mode==='lever')renderLever(true);else if(mode==='fixed')renderFixed(true);else renderMoving(true)}
-    function render(){$('status').setAttribute('aria-live',phase==='running'?'off':'polite');$('readout').setAttribute('aria-live',phase==='running'?'off':'polite');if(mode==='lever')renderLever();else if(mode==='fixed')renderFixed();else renderMoving()}
+    function render(){if(!dynamicMode)$('modelNote').textContent=group[mode].note;$('status').setAttribute('aria-live',phase==='running'?'off':'polite');$('readout').setAttribute('aria-live',phase==='running'?'off':'polite');if(mode==='lever')renderLever();else if(mode==='fixed')renderFixed();else renderMoving()}
     // Inquiry workflow: retain the existing immediate preview via the teacher toggle.
     const predictionQuestions={lever:'你認為放開槓桿後，會發生什麼事？',fixed:'用設定的拉力往下拉，重物會升起嗎？',moving:'用設定的拉力往上拉，重物會升起嗎？'};
-    const predictions={lever:[['left','左側下沉'],['balance','保持平衡'],['right','右側下沉']],fixed:[['rise','可以升起'],['stay','無法升起']],moving:[['rise','可以升起'],['stay','無法升起']]};
-    function correctPrediction(){if(mode==='lever'){const m=leverModel();return m.balance?'balance':m.total>0?'right':'left'}return pulleyModel().canLift?'rise':'stay'}
-    function resetTrial(){if(rafId)cancelAnimationFrame(rafId);rafId=0;phase='ready';progress=0;elapsedMs=0;lastFrameTime=null;prediction='';distanceGuess='';}
+    const predictions={lever:[['left','左側下沉'],['balance','保持平衡'],['right','右側下沉']],fixed:[['rise','可以升起'],['stay','保持原位'],['fall','可能下降']],moving:[['rise','可以升起'],['stay','保持原位'],['fall','可能下降']]};
+    function correctPrediction(){if(mode==='lever'){if(dynamicMode){const t=physicsLeverProps().torque0;return Math.abs(t)<=physicsOptions.pivotFriction+1e-6?'balance':t>0?'right':'left';}const m=leverModel();return m.balance?'balance':m.total>0?'right':'left'}if(dynamicMode){const p=physicalPulleyProperties(),n=p.drive;return Math.abs(n)<=p.resistance+1e-6?'stay':n>0?'rise':'fall'}return pulleyModel().canLift?'rise':'stay'}
+    function resetTrial(){if(rafId)cancelAnimationFrame(rafId);rafId=0;phase='ready';progress=0;elapsedMs=0;lastFrameTime=null;prediction='';distanceGuess='';physical=freshPhysics();if(dynamicMode)renderPhysicsTelemetry();}
     function drawFlow(){
       $('flowPanel').classList.toggle('hide',!inquiry);
       $('simBadge').textContent=!inquiry?'● 即時展示':phase==='ready'?'● 等待實驗':phase==='running'?'● 正在觀察':phase==='paused'?'● 暫停觀察':'● 完成驗證';
       if(!inquiry)return;
-      const opts=predictions[mode];
-      $('predictionPanel').innerHTML=`<div class="prediction-prompt">${predictionQuestions[mode]}<span>（可先選擇預測，也可直接示範）</span></div><div class="prediction-options" role="group" aria-label="實驗結果預測">${opts.map(([key,label])=>`<button type="button" class="prediction-choice ${prediction===key?'selected':''}" data-prediction="${key}" aria-pressed="${prediction===key}" ${phase!=='ready'?'disabled':''}>${prediction===key?'◉':'○'} ${label}</button>`).join('')}</div>${mode==='lever'?'':`<div class="distance-predict"><label for="distanceGuess">延伸預測：重物大約上升幾公分？</label><div class="value-input"><input id="distanceGuess" type="number" min="0" max="150" step="any" inputmode="decimal" value="${distanceGuess}" placeholder="可不填" ${phase!=='ready'?'disabled':''} aria-label="預測上升距離"><span>cm</span></div></div>`}`;
+      const opts=mode!=='lever'&&!dynamicMode?predictions[mode].filter(([k])=>k!=='fall'):predictions[mode];
+      $('predictionPanel').innerHTML=`<div class="prediction-prompt">${predictionQuestions[mode]}<span>（可先選擇預測，也可直接示範）</span></div><div class="prediction-options" role="group" aria-label="實驗結果預測">${opts.map(([key,label])=>`<button type="button" class="prediction-choice ${prediction===key?'selected':''}" data-prediction="${key}" aria-pressed="${prediction===key}" ${phase!=='ready'?'disabled':''}>${prediction===key?'◉':'○'} ${label}</button>`).join('')}</div>${mode==='lever'?'':`<div class="distance-predict"><label for="distanceGuess">${dynamicMode?'延伸預測：相對起點位移（向上為正、向下為負）？':'延伸預測：重物大約上升幾公分？'}</label><div class="value-input"><input id="distanceGuess" type="number" min="${dynamicMode?'-150':'0'}" max="150" step="any" inputmode="decimal" value="${distanceGuess}" placeholder="可不填" ${phase!=='ready'?'disabled':''} aria-label="預測${dynamicMode?'位移':'上升距離'}"><span>cm</span></div></div>`}`;
       $('startTrial').disabled=false;$('startTrial').textContent=phase==='finished'?'▶ 再播放一次':phase==='running'?'⏸ 暫停觀察':phase==='paused'?'▶ 繼續實驗':'▶ 開始實驗';
       $('restartTrial').disabled=false;
       const stepIndex=phase==='ready'?1:['running','paused'].includes(phase)?2:3;
@@ -250,15 +575,25 @@
       if(phase==='finished'){
         const correct=correctPrediction(),match=prediction?prediction===correct:null;
         const actual=predictions[mode].find(p=>p[0]===correct)[1],guessed=predictions[mode].find(p=>p[0]===prediction)?.[1];
-        let extra='';if(mode!=='lever'&&distanceGuess.trim()!==''&&Number.isFinite(Number(distanceGuess))){const lift=pulleyModel().lift;extra=`<div class="feedback-extra">你預測上升 ${fmt(Number(distanceGuess),2)} cm，模型結果為 ${fmt(lift,2)} cm。兩者差距 ${fmt(Math.abs(Number(distanceGuess)-lift),2)} cm。</div>`}
+        let extra='';if(mode!=='lever'&&distanceGuess.trim()!==''&&Number.isFinite(Number(distanceGuess))){const lift=dynamicMode?physical.y*100:pulleyModel().lift;extra=`<div class="feedback-extra">你預測${dynamicMode?'位移':'上升'} ${fmt(Number(distanceGuess),2)} cm，${dynamicMode?'物理模擬':'模型'}位移為 ${fmt(lift,2)} cm${dynamicMode?'（向上為正）':''}。差距 ${fmt(Math.abs(Number(distanceGuess)-lift),2)} cm。</div>`}
         feedback.className='trial-feedback '+(match===null?'neutral':match?'correct':'review');
         feedback.innerHTML=`<strong>${match===null?'實驗結果已揭曉':match?'✓ 預測與模型結果一致！':'🔎 預測和模型結果不同，想想原因'}</strong><div>${guessed?'你的預測：'+guessed+'　｜　':''}實驗結果：${actual}</div>${extra}`;
       }
       updateProgressUI();
     }
-    function updateProgressUI(){if(!inquiry)return;$('progressFill').style.width=`${Math.round(progress*100)}%`;$('progressText').textContent=phase==='ready'?'調整好參數後，開始觀察會發生什麼事。':phase==='running'?`動畫進行中 ${Math.round(elapsedMs/durations[animationSpeed]*100)}%`:phase==='paused'?`已暫停於 ${Math.round(elapsedMs/durations[animationSpeed]*100)}%，可繼續觀察。`:'實驗已完成，可核對結果或重新播放。'}
+    function updateProgressUI(){if(!inquiry)return;if(dynamicMode){$('progressFill').style.width=`${Math.round(progress*100)}%`;$('progressText').textContent=phase==='ready'?'物理系統從靜止開始，按「開始實驗」釋放。':phase==='running'?`物理模擬：${fmt(physical.clock,2)} / ${physicsOptions.duration} 秒`:phase==='paused'?`已暫停於 ${fmt(physical.clock,2)} 秒。`:`已模擬 ${fmt(physical.clock,2)} 秒，可核對數據或重新實驗。`;return;}$('progressFill').style.width=`${Math.round(progress*100)}%`;$('progressText').textContent=phase==='ready'?'調整好參數後，開始觀察會發生什麼事。':phase==='running'?`動畫進行中 ${Math.round(elapsedMs/durations[animationSpeed]*100)}%`:phase==='paused'?`已暫停於 ${Math.round(elapsedMs/durations[animationSpeed]*100)}%，可繼續觀察。`:'實驗已完成，可核對結果或重新播放。'}
     function animateFrame(now){
       if(phase!=='running')return;
+      if(dynamicMode){
+        const wallDelta=lastFrameTime===null?0:Math.min(0.05,Math.max(0,(now-lastFrameTime)/1000));lastFrameTime=now;
+        // Fixed-size integration steps improve stability across screens and animation speeds.
+        let remaining=wallDelta*physicsSpeed();const limit=Math.max(0,physicsOptions.duration-physical.clock);
+        remaining=Math.min(remaining,limit);
+        while(remaining>1e-7){const dt=Math.min(1/240,remaining);physicsStep(dt);remaining-=dt;}
+        elapsedMs=physical.clock*1000;progress=clamp(physical.clock/physicsOptions.duration,0,1);
+        if(progress>=1-1e-6){phase='finished';progress=1;rafId=0;render();drawFlow();return;}
+        renderVisual();renderPhysicsTelemetry();updateProgressUI();rafId=requestAnimationFrame(animateFrame);return;
+      }
       if(lastFrameTime!==null)elapsedMs+=Math.min(100,now-lastFrameTime);
       lastFrameTime=now;
       const t=clamp(elapsedMs/durations[animationSpeed],0,1);
@@ -274,47 +609,98 @@
       if(phase==='paused'){phase='running';lastFrameTime=null;drawFlow();rafId=requestAnimationFrame(animateFrame);return;}
       if(rafId)cancelAnimationFrame(rafId);
       rafId=0;phase='running';progress=0;elapsedMs=0;lastFrameTime=null;drawFlow();render();
-      if(reducedMotion.matches){progress=1;phase='finished';render();drawFlow();return;}
+      if(reducedMotion.matches&&!dynamicMode){progress=1;phase='finished';render();drawFlow();return;}
       rafId=requestAnimationFrame(animateFrame);
     }
-    $('toggleInquiry').addEventListener('click',()=>{inquiry=!inquiry;resetTrial();$('toggleInquiry').classList.toggle('active',inquiry);$('toggleInquiry').setAttribute('aria-pressed',String(inquiry));$('inquiryBtnLabel').textContent=inquiry?'探究模式：開':'探究模式：關';render();drawFlow()});
+    $('toggleInquiry').addEventListener('click',()=>{if(dynamicMode)return;inquiry=!inquiry;resetTrial();$('toggleInquiry').classList.toggle('active',inquiry);$('toggleInquiry').setAttribute('aria-pressed',String(inquiry));$('inquiryBtnLabel').textContent=inquiry?'探究模式：開':'探究模式：關';render();drawFlow()});
     $('viewWeightMode').addEventListener('click',()=>setLeverDisplayMode('weights'));
     $('viewGaugeMode').addEventListener('click',()=>setLeverDisplayMode('gauge'));
+    $('modeIllustration').addEventListener('click',()=>setDynamicMode(false));
+    $('modePhysics').addEventListener('click',()=>setDynamicMode(true));
+    $('showLivePhysics').addEventListener('change',e=>{showLivePhysics=e.target.checked;renderPhysicsTelemetry();});
+    $('physicsSettings').addEventListener('input',e=>{
+      const el=e.target.closest('input[data-phys]');if(!el)return;
+      physicsOptions[el.dataset.phys]=Number(el.value);
+      const suffix={beamMass:'kg',pulleyMass:'kg',fixedPulleyMass:'kg',pulleyRadius:'m',axleFriction:'N·m',pivotFriction:'N·m',damping:mode==='lever'?'N·m·s':'N·s/m',duration:'秒',stopBounce:''};
+      $('physo-'+el.dataset.phys).textContent=`${fmt(Number(el.value),2)} ${suffix[el.dataset.phys]||''}`;
+      resetTrial();render();drawFlow();
+    });
+    $('physicsSettings').addEventListener('change',e=>{
+      const check=e.target.closest('input[data-phys-toggle]'),select=e.target.closest('select[data-phys-select]');
+      if(check)physicsOptions[check.dataset.physToggle]=check.checked;
+      else if(select)physicsOptions[select.dataset.physSelect]=select.value;
+      else return;
+      resetTrial();render();drawFlow();
+    });
     $('predictionPanel').addEventListener('click',e=>{const choice=e.target.closest('button[data-prediction]');if(!choice||phase!=='ready')return;prediction=choice.dataset.prediction;drawFlow()});
     $('predictionPanel').addEventListener('input',e=>{if(e.target.id==='distanceGuess')distanceGuess=e.target.value});
     $('startTrial').addEventListener('click',beginTrial);
-    $('animationSpeed').addEventListener('change',e=>{const proportion=elapsedMs/durations[animationSpeed];animationSpeed=e.target.value;elapsedMs=proportion*durations[animationSpeed];updateProgressUI()});
+    $('animationSpeed').addEventListener('change',e=>{const proportion=elapsedMs/durations[animationSpeed];animationSpeed=e.target.value;if(!dynamicMode)elapsedMs=proportion*durations[animationSpeed];updateProgressUI()});
     $('restartTrial').addEventListener('click',()=>{resetTrial();render();drawFlow()});
     // Handle all controls with delegated input events. Numeric inputs may temporarily contain empty or incomplete text.
+    $('controls').addEventListener('click',e=>{
+      const rangeButton=e.target.closest('button[data-meter-range]');
+      if(rangeButton){setMeterRange(Number(rangeButton.dataset.meterRange));return;}
+      const bump=e.target.closest('button[data-force-bump]');
+      if(bump){setForce(state.lever.effortForce+Number(bump.dataset.forceBump));return;}
+    });
     $('controls').addEventListener('input',e=>{const input=e.target.closest('input[data-key]');if(!input)return;const v=Number(input.value);if(input.value.trim()===''||!Number.isFinite(v))return;setField(input.dataset.key,v)});
     $('controls').addEventListener('change',e=>{const input=e.target.closest('input[type="number"]');if(!input)return;const key=input.dataset.key;setField(key,input.value.trim()===''?state[mode][key]:Number(input.value));input.value=pretty(state[mode][key])});
     document.querySelectorAll('.mode').forEach(el=>el.addEventListener('click',()=>switchMode(el.dataset.mode)));
     $('toggleTorque').addEventListener('click',()=>{showTorque=!showTorque;$('toggleTorque').classList.toggle('active',showTorque);$('toggleTorque').setAttribute('aria-pressed',String(showTorque));syncToggleLabel();render()});
     $('togglePresentation').addEventListener('click',()=>{presentation=!presentation;document.body.classList.toggle('presentation',presentation);$('togglePresentation').classList.toggle('active',presentation);$('togglePresentation').setAttribute('aria-pressed',String(presentation));$('presentationBtnLabel').textContent=presentation?'退出投影':'投影模式'});
-    $('resetAction').addEventListener('click',()=>{state[mode]={...defaults[mode]};resetTrial();syncControls();render();drawFlow()});
+    $('resetAction').addEventListener('click',()=>{state[mode]={...defaults[mode]};if(meterRaf)cancelAnimationFrame(meterRaf);meterRaf=0;meterDisplayedForce=state.lever.effortForce;meterRange=suitableMeterRange(meterDisplayedForce);resetTrial();syncControls();updateMeterRangeUI();render();drawFlow()});
     $('mainAction').addEventListener('click',()=>{
       resetTrial();
       if(mode==='lever'){
         const s=state.lever;const dl=s.loadPos-s.pivot;let de=s.effortPos-s.pivot;
-        if(Math.abs(dl)<.01){s.effortPos=s.pivot;resetTrial();render();syncControls();drawFlow();return}
-        if(Math.sign(dl)===Math.sign(de)||Math.abs(de)<1){s.effortPos=dl<0?190:10;de=s.effortPos-s.pivot}
+        const beamTerm=dynamicMode?physicsOptions.beamMass*(100-s.pivot):0;
+        const unbalanced=s.loadMass*dl+beamTerm;
+        if(Math.abs(unbalanced)<.001){
+          if(leverDisplayMode==='weights')s.effortPos=s.pivot;
+          else {s.effortForce=0;meterDisplayedForce=0;}
+          resetTrial();syncControls();render();drawFlow();return;
+        }
+        if(Math.sign(unbalanced)===Math.sign(de)||Math.abs(de)<1){s.effortPos=unbalanced<0?190:10;de=s.effortPos-s.pivot}
         if(leverDisplayMode==='weights'){
-          const mass=Math.abs(s.loadMass*dl/de);
+          const mass=Math.abs(unbalanced/de);
           if(mass>20||mass<.1){$('status').className='status warn';$('status').innerHTML=statusHTML('warn','目前位置無法在砝碼範圍內精確平衡','請調整支點、另一側位置或負載重量後再試一次。');syncControls();drawFlow();return}
           s.effortMass=Math.round(mass*100)/100;
         }else{
-          const force=Math.abs((s.loadMass*g)*dl/de);
+          const force=Math.abs(unbalanced*g/de);
           if(force>200||force<0){$('status').className='status warn';$('status').innerHTML=statusHTML('warn','目前位置無法在施力量表範圍內精確平衡','請調整支點、施力位置或負載重量後再試一次。');syncControls();drawFlow();return}
           s.effortForce=Math.round(force*100)/100;
         }
-      }else state[mode].force=state[mode].mass*g/(mode==='fixed'?1:2);
-      resetTrial();syncControls();render();drawFlow();
+      }else state[mode].force=(state[mode].mass+(dynamicMode&&mode==='moving'?physicsOptions.pulleyMass:0))*g/(mode==='fixed'?1:2);
+      if(meterRaf)cancelAnimationFrame(meterRaf);meterRaf=0;meterDisplayedForce=state.lever.effortForce;meterRange=suitableMeterRange(meterDisplayedForce);resetTrial();syncControls();updateMeterRangeUI();render();drawFlow();
     });
-    // Pointer events work on both desktop mouse and touchscreens; object locations map to 0–200 cm.
-    const svg=$('diagram');const clientToCm=(e)=>{const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=svg.getScreenCTM();if(!m)return null;const at=pt.matrixTransform(m.inverse());return clamp((at.x-105)/790*200,0,200)};
-    svg.addEventListener('pointerdown',e=>{if(mode!=='lever')return;const handle=e.target.closest('[data-drag]');if(!handle)return;drag={key:handle.dataset.drag,id:e.pointerId};try{svg.setPointerCapture(e.pointerId)}catch(_){}});
-    svg.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId||mode!=='lever')return;const cm=clientToCm(e);if(cm==null)return;const r=drag.key==='pivot'?clamp(Math.round(cm/5)*5,10,190):Math.round(cm/5)*5;setField(drag.key,r)});
-    for(const type of ['pointerup','pointercancel','lostpointercapture'])svg.addEventListener(type,()=>{drag=null});
+    // Pointer events: both the fulcrum/weight anchors and the spring-scale track work with mouse/touch.
+    const svg=$('diagram');
+    const clientToSvg=e=>{const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=svg.getScreenCTM();return m?pt.matrixTransform(m.inverse()):null};
+    const clientToCm=e=>{const at=clientToSvg(e);return at?clamp((at.x-105)/790*200,0,200):null};
+    function updateDrag(e){
+      if(!drag||drag.id!==e.pointerId||mode!=='lever')return;
+      if(drag.key==='forceGauge'){
+        const at=clientToSvg(e);if(!at)return;
+        const percent=clamp((meterTrackTop+meterTrackHeight-at.y)/meterTrackHeight,0,1);
+        setForce(Math.round(percent*meterRange),{immediate:true});
+        return;
+      }
+      const cm=clientToCm(e);if(cm==null)return;
+      const r=drag.key==='pivot'?clamp(Math.round(cm/5)*5,10,190):Math.round(cm/5)*5;
+      setField(drag.key,r);
+    }
+    svg.addEventListener('pointerdown',e=>{
+      if(mode!=='lever')return;
+      const handle=e.target.closest('[data-drag]');if(!handle)return;
+      if(handle.dataset.drag==='forceGauge'&&leverDisplayMode!=='gauge')return;
+      drag={key:handle.dataset.drag,id:e.pointerId};
+      try{svg.setPointerCapture(e.pointerId)}catch(_){}
+      if(drag.key==='forceGauge')updateDrag(e);
+      e.preventDefault();
+    });
+    svg.addEventListener('pointermove',updateDrag);
+    for(const type of ['pointerup','pointercancel','lostpointercapture'])svg.addEventListener(type,e=>{if(!drag||e.pointerId===drag.id)drag=null});
     // Keyboard tab navigation: arrow keys move between modes.
     document.querySelector('.modes').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const modes=['lever','fixed','moving'];let i=modes.indexOf(mode);i=e.key==='Home'?0:e.key==='End'?2:(i+(e.key==='ArrowLeft'?-1:1)+3)%3;switchMode(modes[i]);$('tab-'+modes[i]).focus();e.preventDefault()});
     window.addEventListener('resize',()=>{syncDiagramViewport();renderVisual()});
